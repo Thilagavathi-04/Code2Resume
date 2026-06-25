@@ -299,10 +299,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ChromaDB](https://www.trychroma.com/) - Vector database
 - [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS framework
 
----
-
-**Built with ❤️ by developers, for developers. All processing happens on YOUR machine. Your code, your data, your privacy.**
-# Code2resume
-# Code2resume
-# Code2resume
-# Code2resume
