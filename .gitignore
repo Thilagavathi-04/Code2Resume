@@ -1,0 +1,108 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+env/
+venv/
+.env
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# PyCharm
+.idea/
+
+# Databases
+*.db
+*.sqlite3
+users.db
+
+# Project Specific - Data Files
+chroma_db/
+dataset/
+*.log
+uv.lock
+
+# User Data (keep structure but ignore user files)
+# data/Git_details/*/
+# data/resumes/*.tex
+# data/outputs/*
+# !data/outputs/README.md
+# data/lora_model/*
+# !data/lora_model/README.md
+
+# Keep template/example directories
+!data/LateX_template/
+!data/fonts/
+!data/templates/
+
+# OS Generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.env
+tmp/
+fine-tuning/
+tests/
+data/
+*.db
+.mimocode/
