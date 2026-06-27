@@ -137,11 +137,72 @@ export default function Resumes() {
       const response = await generateResume(generateQuery);
       if (response.success) {
         const title = generateQuery.length > 50 ? generateQuery.slice(0, 50) + '...' : generateQuery;
-        await v2.resumes.create({
+        const resumeData = response.resume_data || {};
+        const personal = resumeData.personal || {};
+
+        const res = await v2.resumes.create({
           title,
-          template: 'modern',
-          summary: response.message || 'Generated resume',
+          template: response.template_used || 'modern',
+          summary: resumeData.summary || '',
+          target_role: generateQuery,
+          content: { personal },
         });
+        const created = res.data || res;
+        const resumeId = created.id;
+
+        for (const exp of (resumeData.experience || [])) {
+          if (exp.company || exp.position) {
+            await v2.resumes.addExperience(resumeId, {
+              company: exp.company || '',
+              position: exp.position || '',
+              start_date: exp.startDate || '',
+              end_date: exp.endDate || '',
+              description: exp.description || '',
+              highlights: exp.highlights || [],
+            });
+          }
+        }
+        for (const edu of (resumeData.education || [])) {
+          if (edu.institution) {
+            await v2.resumes.addEducation(resumeId, {
+              institution: edu.institution,
+              degree: edu.degree || '',
+              field_of_study: edu.field || '',
+              start_date: edu.startDate || '',
+              end_date: edu.endDate || '',
+              gpa: edu.gpa || '',
+            });
+          }
+        }
+        for (const skill of (resumeData.skills || [])) {
+          if (skill.name) {
+            await v2.resumes.addSkill(resumeId, {
+              name: skill.name,
+              proficiency: skill.proficiency || 'intermediate',
+              category: skill.category || '',
+            });
+          }
+        }
+        for (const cert of (resumeData.certifications || [])) {
+          if (cert.name) {
+            await v2.resumes.addCertification(resumeId, {
+              name: cert.name,
+              issuer: cert.issuer || '',
+            });
+          }
+        }
+        for (const proj of (resumeData.projects || [])) {
+          if (proj.name) {
+            await v2.resumes.addProject(resumeId, {
+              name: proj.name,
+              description: proj.description || '',
+              technologies: proj.technologies || [],
+              highlights: proj.highlights || [],
+              github_url: proj.github_url || '',
+            });
+          }
+        }
+
         addToast({ type: 'success', message: response.message || 'Resume generated!' });
         setShowGenerateModal(false);
         setGenerateQuery('');

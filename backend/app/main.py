@@ -39,7 +39,37 @@ app.include_router(v1_router)
 async def on_startup():
     await init_db()
 
+    print(f"[startup] Using model: {settings.DEFAULT_MODEL} (timeout: {settings.LLM_TIMEOUT}s)")
+
+    import ollama as _ollama
+    try:
+        _ollama.list()
+        print("[startup] Ollama connection OK")
+    except Exception as e:
+        print(f"[startup] WARNING: Ollama is not reachable: {e}")
+        print("[startup] Resume generation will fail until ollama is started (ollama serve)")
+
+    try:
+        from services.rag_service import RAGService
+        rag = RAGService()
+        rag._ensure_init()
+        print("[startup] RAG service initialized")
+    except Exception as e:
+        print(f"[startup] WARNING: RAG init failed: {e}")
+
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "app": settings.APP_NAME, "version": settings.APP_VERSION}
+    import ollama as _ollama
+    ollama_ok = False
+    try:
+        _ollama.list()
+        ollama_ok = True
+    except Exception:
+        pass
+    return {
+        "status": "ok" if ollama_ok else "degraded",
+        "app": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "ollama": "connected" if ollama_ok else "disconnected",
+    }

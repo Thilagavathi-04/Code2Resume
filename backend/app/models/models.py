@@ -30,10 +30,10 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), default=utcnow)
     updated_at = Column(DateTime(timezone=True), default=utcnow, onupdate=utcnow)
 
-    resumes = relationship("Resume", back_populates="user", lazy="selectin")
-    job_descriptions = relationship("JobDescription", back_populates="user", lazy="selectin")
-    ats_reports = relationship("ATSReport", back_populates="user", lazy="selectin")
-    interview_sessions = relationship("InterviewSession", back_populates="user", lazy="selectin")
+    resumes = relationship("Resume", back_populates="user", lazy="noload")
+    job_descriptions = relationship("JobDescription", back_populates="user", lazy="noload")
+    ats_reports = relationship("ATSReport", back_populates="user", lazy="noload")
+    interview_sessions = relationship("InterviewSession", back_populates="user", lazy="noload")
 
 
 class Resume(Base):

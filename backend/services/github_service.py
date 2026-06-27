@@ -4,19 +4,19 @@ import asyncio
 from typing import Dict, List, Optional, Any
 from urllib.parse import urlparse
 import base64
-from config.settings import settings
+from app.core.config import settings
 
 class GitHubService:
     """Service to interact with GitHub API and extract repository information"""
     
     def __init__(self, user_token: str = None):
-        self.base_url = settings.github_api_base
+        self.base_url = settings.GITHUB_API_BASE
         self.headers = {
             'Accept': 'application/vnd.github.v3+json',
             'User-Agent': 'Code2Resume/1.0'
         }
         
-        token = user_token or settings.github_token
+        token = user_token or settings.GITHUB_TOKEN
         if token:
             self.headers['Authorization'] = f'token {token}'
     
@@ -27,17 +27,12 @@ class GitHubService:
         try:
             owner, repo = self._parse_repo_url(repo_url)
             
-            # Fetch repository metadata
-            repo_data = await self._fetch_repo_data(owner, repo)
-            
-            # Fetch README content
-            readme_content = await self._fetch_readme(owner, repo)
-            
-            # Fetch language statistics
-            languages = await self._fetch_languages(owner, repo)
-            
-            # Analyze repository structure
-            structure = await self._analyze_structure(owner, repo)
+            repo_data, readme_content, languages, structure = await asyncio.gather(
+                self._fetch_repo_data(owner, repo),
+                self._fetch_readme(owner, repo),
+                self._fetch_languages(owner, repo),
+                self._analyze_structure(owner, repo),
+            )
             
             return {
                 'name': repo_data['name'],

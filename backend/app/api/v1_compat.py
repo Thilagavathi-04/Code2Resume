@@ -71,20 +71,8 @@ async def get_user_repos(
         raw_repos = response.json()
         repos = []
         for r in raw_repos:
-            repo_name = r.get("name", "")
-            readme = ""
-            try:
-                readme_url = f"{gh.base_url}/repos/{owner}/{repo_name}/readme"
-                readme_resp = await asyncio.to_thread(
-                    lambda url=readme_url: __import__('requests').get(url, headers={**gh.headers, 'Accept': 'application/vnd.github.v3.raw'}, timeout=10)
-                )
-                if readme_resp.status_code == 200:
-                    readme = readme_resp.text[:3000] if readme_resp.text else ""
-            except Exception:
-                pass
-
             repos.append({
-                "name": repo_name,
+                "name": r.get("name", ""),
                 "description": r.get("description", "") or "",
                 "language": r.get("language", ""),
                 "stars": r.get("stargazers_count", 0),
@@ -95,7 +83,7 @@ async def get_user_repos(
                 "category": "Other",
                 "url": r.get("html_url", ""),
                 "updated_at": r.get("updated_at", ""),
-                "readme": readme,
+                "readme": "",
             })
         return repos
     except Exception as e:
@@ -318,14 +306,32 @@ async def generate_resume_file(
 ):
     user = await user_service.get_user_by_id(db, current_user_id)
     username = user.username if user else "unknown"
+    user_profile = {
+        "email": user.email if user else "",
+        "github": user.github_url if user else "",
+        "linkedin": user.linkedin_id if user else "",
+        "leetcode": user.leetcode_id if user else "",
+    }
     try:
         from services.agent_service import AgentService
         agent = AgentService()
-        latex_content = await asyncio.to_thread(
-            agent.generate_resume, request.query, username, "mistral:latest"
+        result = await asyncio.to_thread(
+            agent.generate_resume, request.query, username, settings.DEFAULT_MODEL, user_profile
         )
-        if latex_content.startswith("Error"):
-            raise HTTPException(status_code=500, detail=latex_content)
+
+        if isinstance(result, str):
+            if result.startswith("Error"):
+                detail = result
+                if "connect" in result.lower() or "refused" in result.lower():
+                    detail = "Ollama server is not running. Start it with: ollama serve"
+                raise HTTPException(status_code=500, detail=detail)
+            raise HTTPException(status_code=500, detail="Unexpected response format from resume engine")
+
+        latex_content = result["latex"]
+        resume_data = result["resume_data"]
+        template_used = result.get("template", "modern")
+        section_order = result.get("section_order", [])
+        validation = result.get("validation", {})
 
         resumes_dir = os.path.join(
             os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
@@ -345,11 +351,18 @@ async def generate_resume_file(
             "success": True,
             "filename": filename,
             "message": "Resume generated successfully!",
+            "resume_data": resume_data,
+            "latex": latex_content,
+            "template_used": template_used,
+            "section_order": section_order,
+            "validation": validation,
         }
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Resume generation failed: {e}")
 
 
 @router.get("/resumes")

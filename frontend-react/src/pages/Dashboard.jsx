@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -41,13 +41,18 @@ export default function Dashboard() {
   const [interviewCount, setInterviewCount] = useState(0);
   const [latestAtsScore, setLatestAtsScore] = useState(null);
   const [profileStrength, setProfileStrength] = useState(0);
+  const reposRef = useRef([]);
+  const loadedRef = useRef(false);
 
   const loadRepos = useCallback(async () => {
     try {
       const data = await fetchUserRepos();
-      setRepos(Array.isArray(data) ? data : []);
+      const reposArr = Array.isArray(data) ? data : [];
+      setRepos(reposArr);
+      reposRef.current = reposArr;
     } catch {
       setRepos([]);
+      reposRef.current = [];
     }
   }, []);
 
@@ -79,7 +84,7 @@ export default function Dashboard() {
         setLatestAtsScore(sorted[0].overall_score ?? sorted[0].score ?? null);
       }
 
-      const repoCount = repos.length;
+      const repoCount = reposRef.current.length;
       const strengthParts = [
         repoCount > 0 ? 1 : 0,
         resumes.length > 0 ? 1 : 0,
@@ -126,21 +131,17 @@ export default function Dashboard() {
       setProfileStrength(0);
       setActivities([]);
     }
-  }, [repos]);
+  }, []);
 
   useEffect(() => {
+    if (loadedRef.current) return;
+    loadedRef.current = true;
     const loadAll = async () => {
-      await loadRepos();
+      await Promise.all([loadRepos(), loadV2Data()]);
       setLoading(false);
     };
     loadAll();
-  }, [loadRepos]);
-
-  useEffect(() => {
-    if (!loading) {
-      loadV2Data();
-    }
-  }, [loading, loadV2Data]);
+  }, [loadRepos, loadV2Data]);
 
   useEffect(() => {
     if (!loading && repos.length > 0) {
@@ -172,7 +173,7 @@ export default function Dashboard() {
         }).slice(0, 5);
       });
     }
-  }, [repos, loading]);
+  }, [repos.length > 0, loading]);
 
   const handleAnalyze = async () => {
     setAnalyzing(true);

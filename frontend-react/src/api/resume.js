@@ -1,7 +1,7 @@
 import api from './axiosConfig';
 
 export const generateResume = async (query) => {
-  const response = await api.post('/generate-resume', { query });
+  const response = await api.post('/generate-resume', { query }, { timeout: 240000 });
   return response.data;
 };
 

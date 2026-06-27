@@ -5,19 +5,26 @@ from typing import Optional
 class Settings(BaseSettings):
     APP_NAME: str = "Code2Resume"
     APP_VERSION: str = "0.1.0"
-    DEBUG: bool = True
+    DEBUG: bool = False
 
-    DATABASE_URL: str = "postgresql+asyncpg://zypher:3066@localhost:5432/code2resume"
+    DATABASE_URL: str = ""
     DATABASE_ECHO: bool = False
-
-    SECRET_KEY: str = "your-secret-key-keep-it-secret"
+    SECRET_KEY: str = ""
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
+    OLLAMA_HOST: str = ""
+    LLM_TIMEOUT: int = 180
+    DEFAULT_MODEL: str = ""
+    FALLBACK_MODEL: str = ""
+    MAX_TOKENS: int = 1000
+    TEMPERATURE: float = 0.7
+
+    MAX_BULLET_POINTS: int = 5
+    MIN_BULLET_POINTS: int = 3
+
     GITHUB_API_BASE: str = "https://api.github.com"
-    OLLAMA_HOST: str = "http://localhost:11434"
-    DEFAULT_MODEL: str = "mistral:latest"
-    FALLBACK_MODEL: str = "llama3.1:8b"
+    GITHUB_TOKEN: Optional[str] = None
 
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-3.5-turbo"

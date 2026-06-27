@@ -7,12 +7,23 @@ from services.project_classifier import classify_project, detect_difficulty, ext
 
 
 class RAGService:
+    _initialized = False
+
     def __init__(self, persist_directory="./chroma_db"):
-        if not os.path.exists(persist_directory):
-            os.makedirs(persist_directory)
+        self.persist_directory = persist_directory
+        self.client = None
+        self.embedding_fn = None
+        self.collection = None
+        self._initialized = False
+
+    def _ensure_init(self):
+        if self._initialized:
+            return
+        if not os.path.exists(self.persist_directory):
+            os.makedirs(self.persist_directory)
 
         self.client = chromadb.PersistentClient(
-            path=persist_directory,
+            path=self.persist_directory,
             settings=Settings(anonymized_telemetry=False)
         )
         self.embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(model_name="all-MiniLM-L6-v2")
@@ -21,8 +32,11 @@ class RAGService:
             name="github_repos",
             embedding_function=self.embedding_fn
         )
+        RAGService._initialized = True
+        self._initialized = True
 
     def add_repo_data(self, repo_data: dict, username: str):
+        self._ensure_init()
         repo_name = repo_data.get("name", "unknown")
         description = repo_data.get("description", "")
         tech_stack = repo_data.get("tech_stack", [])
@@ -74,6 +88,7 @@ class RAGService:
         print(f"Indexed {repo_name} for user {username} [category={classification['category']}, difficulty={difficulty}, score={scores['final_score']}]")
 
     def query(self, query_text: str, username: str, n_results: int = 3):
+        self._ensure_init()
         if self.collection.count() == 0:
             return {"documents": [[]], "metadatas": [[]]}
 
@@ -85,6 +100,7 @@ class RAGService:
         return results
 
     def get_user_repos(self, username: str):
+        self._ensure_init()
         if self.collection.count() == 0:
             return []
 
@@ -131,6 +147,7 @@ class RAGService:
         return repos
 
     def get_user_repos_by_category(self, username: str, category: str):
+        self._ensure_init()
         if self.collection.count() == 0:
             return []
 

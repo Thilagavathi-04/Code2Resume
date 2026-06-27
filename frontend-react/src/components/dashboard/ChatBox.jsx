@@ -7,6 +7,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import { Send, Copy, Check, RotateCw, Bot, User, Sparkles, Trash2, Download, Eye, Save, X } from 'lucide-react';
 import { useChatStore } from '../../store/chatStore';
+import { useToastStore } from '../ui/Toast';
 import ResumePreview from '../resume/ResumePreview';
 
 function ResumeActionButtons({ resumeData, filename, savedResumeId, onSave, onDisplay, saving }) {
@@ -103,6 +104,7 @@ function ResumePreviewModal({ isOpen, onClose, resumeData }) {
 
 export default function ChatBox() {
   const { messages, addMessage, updateLastAssistantMessage, setLoading, loading, clearMessages } = useChatStore();
+  const addToast = useToastStore(s => s.addToast);
   const [input, setInput] = useState('');
   const [copiedCode, setCopiedCode] = useState(null);
   const messagesEndRef = useRef(null);
@@ -198,8 +200,10 @@ export default function ChatBox() {
       }
 
       setResumeStates(prev => ({ ...prev, [msgIndex]: { ...prev[msgIndex], saving: false, savedResumeId: resumeId } }));
+      addToast({ type: 'success', message: 'Resume saved to My Resumes!' });
     } catch (err) {
       console.error('Failed to save resume:', err);
+      addToast({ type: 'error', message: 'Failed to save resume. Please try again.' });
       setResumeStates(prev => ({ ...prev, [msgIndex]: { ...prev[msgIndex], saving: false } }));
     }
   };

@@ -1,0 +1,99 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[left=0.55in,right=0.55in,top=0.55in,bottom=0.55in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{fontawesome5}
+\usepackage{lmodern}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage[english]{babel}
+
+\input glyphtounicode
+\pdfgentounicode=1
+
+\definecolor{accent}{HTML}{1A73E8}
+
+\renewcommand{\familydefault}{\sfdefault}
+
+\titleformat{\section}{\large\bfseries\color{accent}}{}{0em}{}[\titlerule]
+\titlespacing*{\section}{0pt}{6pt}{4pt}
+
+\setlist[itemize]{leftmargin=*, itemsep=1pt, topsep=1pt, parsep=0pt}
+
+\newcommand{\tightitem}[1]{\item \small #1}
+
+\pagenumbering{gobble}
+
+\begin{document}
+
+\begin{center}
+    {\Huge \textbf{\textcolor{accent}{<< personal.name | escape_latex >>}}} \\[2pt]
+    << personal.location | escape_latex >><< " \quad | \quad " if personal.location >><< personal.email | escape_latex >><< " \quad | \quad " if personal.email >><< personal.phone | escape_latex >>
+<% if personal.github %> \quad | \quad \href{<< personal.github >>}{\faGithub\ GitHub}<% endif %>
+<% if personal.linkedin %> \quad | \quad \href{<< personal.linkedin >>}{\faLinkedin\ LinkedIn}<% endif %>
+<% if personal.website %> \quad | \quad \href{<< personal.website >>}{\faGlobe\ Portfolio}<% endif %>
+\end{center}
+
+<% if summary %>
+\section*{Summary}
+<< summary | escape_latex >>
+<% endif %>
+
+<% if skills %>
+\section*{Technical Skills}
+<% set categories = skills | map(attribute='category') | unique | list %>
+<% for cat in categories %>
+\textbf{<< cat | escape_latex >>:} << skills | selectattr('category', 'equalto', cat) | map(attribute='name') | map('escape_latex') | join(', ') >>
+<% endfor %>
+<% endif %>
+
+<% if experience %>
+\section*{Experience}
+<% for exp in experience %>
+\textbf{<< exp.position | escape_latex >>} \hfill \textbf{<< exp.startDate | escape_latex >> -- << exp.endDate | escape_latex >>} \\
+\textit{<< exp.company | escape_latex >>}
+\begin{itemize}
+<% for h in exp.highlights %>
+    \tightitem{<< h | escape_latex >>}
+<% endfor %>
+\end{itemize}
+<% endfor %>
+<% endif %>
+
+<% if projects %>
+\section*{Projects}
+<% for proj in projects %>
+\textbf{<< proj.name | escape_latex >>} \hfill \textit{<< proj.technologies | join(', ') | escape_latex >>} \\
+\textit{<< proj.description | escape_latex >>
+<% if proj.github_url %>} \\
+\href{<< proj.github_url >>}{\faGithub\ Source Code}
+<% else %>}
+<% endif %>
+\begin{itemize}
+<% for h in proj.highlights %>
+    \tightitem{<< h | escape_latex >>}
+<% endfor %>
+\end{itemize}
+<% endfor %>
+<% endif %>
+
+<% if education %>
+\section*{Education}
+<% for edu in education %>
+\textbf{<< edu.institution | escape_latex >>} \hfill \textbf{<< edu.startDate | escape_latex >> -- << edu.endDate | escape_latex >>} \\
+<< edu.degree | escape_latex >><< " in " + edu.field | escape_latex if edu.field >><< " \hfill CGPA: " + edu.gpa if edu.gpa >>
+<% endfor %>
+<% endif %>
+
+<% if certifications %>
+\section*{Certifications}
+\begin{itemize}
+<% for cert in certifications %>
+    \tightitem{<< cert.name | escape_latex >><< " --- " + cert.issuer | escape_latex if cert.issuer >>}
+<% endfor %>
+\end{itemize}
+<% endif %>
+
+\end{document}

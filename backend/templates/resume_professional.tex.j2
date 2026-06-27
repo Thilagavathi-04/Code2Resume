@@ -1,0 +1,139 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[left=0.55in,right=0.55in,top=0.55in,bottom=0.55in]{geometry}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{fontawesome5}
+\usepackage[default]{sourcesanspro}
+
+\input glyphtounicode
+\pdfgentounicode=1
+
+\definecolor{headerblue}{RGB}{48, 124, 185}
+\definecolor{sectionblue}{RGB}{32, 102, 148}
+
+\pagestyle{empty}
+\setlength{\tabcolsep}{4pt}
+
+\titleformat{\section}
+{\large\bfseries\color{sectionblue}}{}{0em}{}
+[\color{sectionblue}\titlerule\vspace{4pt}]
+
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=12pt, itemsep=2pt]}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{2pt}}
+
+\newcommand{\projectHeading}[3]{
+  \textbf{#1} \hfill {\small\textit{#2}}\\[-2pt]
+  {\small\textit{#3}}
+}
+
+\newcommand{\educationHeading}[4]{
+  \textbf{#1} \hfill \textbf{#2}\\[-2pt]
+  {\small #3} \hfill {\small #4}
+}
+
+\begin{document}
+
+\begin{center}
+{\Huge\bfseries\textcolor{headerblue}{<< personal.name | escape_latex >>}}\\[4pt]
+<< personal.location | escape_latex >>
+<% if personal.email or personal.phone or personal.github or personal.linkedin %> \\[4pt]
+<% if personal.email %>\faEnvelope\ << personal.email | escape_latex >> \quad|\quad<% endif %>
+<% if personal.phone %>\faPhone\ << personal.phone | escape_latex >> \quad|\quad<% endif %>
+<% if personal.linkedin %>\href{<< personal.linkedin >>}{\faLinkedin\ LinkedIn} \quad|\quad<% endif %>
+<% if personal.github %>\href{<< personal.github >>}{\faGithub\ GitHub}<% endif %>
+<% if personal.website %> \quad|\quad \href{<< personal.website >>}{\faGlobe\ Portfolio}<% endif %>
+<% endif %>
+\end{center}
+
+\vspace{6pt}
+
+<% if summary %>
+\section{PROFILE}
+\small{<< summary | escape_latex >>}
+\vspace{4pt}
+<% endif %>
+
+<% if education %>
+\section{EDUCATION}
+<% for edu in education %>
+\educationHeading
+{<< edu.institution | escape_latex >>}
+{<< edu.startDate | escape_latex >> -- << edu.endDate | escape_latex >>}
+{<< edu.degree | escape_latex >><< " in " + edu.field | escape_latex if edu.field >>}
+{<< "CGPA: " + edu.gpa if edu.gpa >>}
+<% if not loop.last %>\vspace{2pt}<% endif %>
+<% endfor %>
+\vspace{4pt}
+<% endif %>
+
+<% if skills %>
+\section{TECHNICAL SKILLS}
+<% set categories = skills | map(attribute='category') | unique | list %>
+\begin{tabularx}{\textwidth}{@{}X X@{}}
+<% set ns = namespace(idx=0) %>
+<% for cat in categories %>
+<% set items = skills | selectattr('category', 'equalto', cat) | map(attribute='name') | map('escape_latex') | join(', ') %>
+<% if ns.idx % 2 == 0 %>
+\textbf{<< cat | escape_latex >>:} << items >>
+<% else %>
+& \textbf{<< cat | escape_latex >>:} << items >> \\
+<% endif %>
+<% set ns.idx = ns.idx + 1 %>
+<% endfor %>
+<% if ns.idx % 2 != 0 %> \\<% endif %>
+\end{tabularx}
+\vspace{4pt}
+<% endif %>
+
+<% if experience %>
+\section{EXPERIENCE}
+\resumeItemListStart
+<% for exp in experience %>
+\resumeItem{
+  \textbf{<< exp.position | escape_latex >>} \hfill {\small << exp.startDate | escape_latex >> -- << exp.endDate | escape_latex >>} \\
+  \textit{<< exp.company | escape_latex >>}
+}
+\resumeItemListStart
+<% for h in exp.highlights %>
+\resumeItem{<< h | escape_latex >>}
+<% endfor %>
+\resumeItemListEnd
+<% endfor %>
+\resumeItemListEnd
+\vspace{4pt}
+<% endif %>
+
+<% if projects %>
+\section{PROJECTS}
+\resumeItemListStart
+<% for proj in projects %>
+\resumeItem{
+  \textbf{<< proj.name | escape_latex >>} \hfill {\small \textit{<< proj.technologies | join(', ') | escape_latex >>}} \\
+  {\small \textit{<< proj.description | escape_latex >>}}
+  <% if proj.github_url %> \\ {\small \href{<< proj.github_url >>}{\faGithub\ Source Code}}<% endif %>
+}
+\resumeItemListStart
+<% for h in proj.highlights %>
+\resumeItem{<< h | escape_latex >>}
+<% endfor %>
+\resumeItemListEnd
+<% endfor %>
+\resumeItemListEnd
+<% endif %>
+
+<% if certifications %>
+\section{CERTIFICATIONS}
+\resumeItemListStart
+<% for cert in certifications %>
+\resumeItem{<< cert.name | escape_latex >><< " --- " + cert.issuer | escape_latex if cert.issuer >>}
+<% endfor %>
+\resumeItemListEnd
+<% endif %>
+
+\end{document}
