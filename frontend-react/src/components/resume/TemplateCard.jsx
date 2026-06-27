@@ -2,13 +2,13 @@ import { motion } from 'framer-motion';
 import Button from '../ui/Button';
 
 const gradients = {
-  modern: 'from-indigo-500 to-purple-600',
+  modern: 'from-gray-900 to-gray-700',
   professional: 'from-gray-700 to-gray-900',
-  startup: 'from-emerald-500 to-teal-600',
+  startup: 'from-gray-600 to-gray-700',
   minimal: 'from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700',
-  creative: 'from-fuchsia-500 to-purple-600',
+  creative: 'from-gray-800 to-gray-700',
   executive: 'from-slate-700 to-slate-900',
-  technical: 'from-cyan-500 to-blue-600',
+  technical: 'from-gray-600 to-gray-700',
 };
 
 const layouts = {
@@ -106,14 +106,14 @@ const layouts = {
   technical: (
     <div className="w-full h-full p-3 space-y-2">
       <div className="h-2 w-2/5 bg-white/40 rounded font-mono" />
-      <div className="h-px w-full bg-cyan-400/40 my-1" />
+      <div className="h-px w-full bg-gray-400/40 my-1" />
       <div className="space-y-1 font-mono">
-        <div className="h-1 w-1/3 bg-cyan-300/40 rounded" />
+        <div className="h-1 w-1/3 bg-gray-300/40 rounded" />
         <div className="h-1 w-full bg-white/20 rounded" />
         <div className="h-1 w-4/5 bg-white/15 rounded" />
       </div>
       <div className="space-y-1 font-mono">
-        <div className="h-1 w-1/4 bg-cyan-300/40 rounded" />
+        <div className="h-1 w-1/4 bg-gray-300/40 rounded" />
         <div className="h-1 w-5/6 bg-white/20 rounded" />
       </div>
     </div>
@@ -129,8 +129,8 @@ export default function TemplateCard({ template, onSelect, isSelected, className
       whileTap={{ scale: 0.98 }}
       className={`group relative rounded-xl overflow-hidden border-2 transition-colors ${
         isSelected
-          ? 'border-indigo-500'
-          : 'border-gray-100 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700'
+          ? 'border-gray-500'
+          : 'border-gray-100 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-700'
       } ${className}`}
     >
       <div className={`aspect-[3/4] bg-gradient-to-br ${gradient}`}>

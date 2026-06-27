@@ -12,9 +12,9 @@ export default function SkillComparison({ yourSkills = [], requiredSkills = [] }
   const extra = [...yourSet].filter(s => !requiredSet.has(s));
 
   const categories = [
-    { label: 'Matching Skills', skills: matched, icon: Check, color: 'text-green-600 dark:text-green-400', bg: 'bg-green-100 dark:bg-green-900/30', barColor: 'bg-green-500' },
+    { label: 'Matching Skills', skills: matched, icon: Check, color: 'text-gray-600 dark:text-gray-400', bg: 'bg-gray-100 dark:bg-gray-900/30', barColor: 'bg-gray-500' },
     { label: 'Missing Skills', skills: missing, icon: X, color: 'text-red-600 dark:text-red-400', bg: 'bg-red-100 dark:bg-red-900/30', barColor: 'bg-red-500' },
-    { label: 'Additional Skills', skills: extra, icon: Plus, color: 'text-blue-600 dark:text-blue-400', bg: 'bg-blue-100 dark:bg-blue-900/30', barColor: 'bg-blue-500' },
+    { label: 'Additional Skills', skills: extra, icon: Plus, color: 'text-gray-600 dark:text-gray-400', bg: 'bg-gray-100 dark:bg-gray-900/30', barColor: 'bg-gray-500' },
   ];
 
   const totalRequired = requiredSet.size;
@@ -24,7 +24,7 @@ export default function SkillComparison({ yourSkills = [], requiredSkills = [] }
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-indigo-600" />
+          <Sparkles className="w-4 h-4 text-gray-900" />
           Skill Comparison
         </h3>
         <span className="text-xs text-gray-500 dark:text-gray-400">{matched.length}/{totalRequired} required skills matched</span>
@@ -35,7 +35,7 @@ export default function SkillComparison({ yourSkills = [], requiredSkills = [] }
           initial={{ width: 0 }}
           animate={{ width: `${matchPercentage}%` }}
           transition={{ duration: 0.8 }}
-          className={`h-full rounded-full ${matchPercentage >= 70 ? 'bg-green-500' : matchPercentage >= 40 ? 'bg-amber-500' : 'bg-red-500'}`}
+          className={`h-full rounded-full ${matchPercentage >= 70 ? 'bg-gray-500' : matchPercentage >= 40 ? 'bg-gray-500' : 'bg-red-500'}`}
         />
       </div>
       <p className="text-xs text-gray-500 dark:text-gray-400 text-right">{matchPercentage}% coverage</p>

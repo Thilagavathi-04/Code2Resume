@@ -56,7 +56,7 @@ export default function KeywordCoverage({ keywords = [] }) {
               onClick={() => setStatusFilter(s)}
               className={`px-2.5 py-1 text-xs font-medium rounded-lg transition-colors capitalize ${
                 statusFilter === s
-                  ? 'bg-indigo-600 text-white shadow-sm'
+                  ? 'bg-gray-900 text-white shadow-sm'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600'
               }`}
             >
@@ -73,7 +73,7 @@ export default function KeywordCoverage({ keywords = [] }) {
             animate={{ width: `${coveragePct}%` }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             className={`h-full rounded-full ${
-              coveragePct >= 70 ? 'bg-green-500' : coveragePct >= 40 ? 'bg-amber-500' : 'bg-red-500'
+              coveragePct >= 70 ? 'bg-gray-500' : coveragePct >= 40 ? 'bg-gray-500' : 'bg-red-500'
             }`}
           />
         </div>
@@ -86,7 +86,7 @@ export default function KeywordCoverage({ keywords = [] }) {
           placeholder="Search keywords..."
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
         />
       </div>
 

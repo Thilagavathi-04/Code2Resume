@@ -1,10 +1,10 @@
 export default function StatsCard({ title, value, icon, color = 'blue' }) {
   const colorClasses = {
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    purple: 'bg-purple-50 text-purple-600',
-    orange: 'bg-amber-50 text-amber-600',
-    teal: 'bg-teal-50 text-teal-600',
+    blue: 'bg-gray-50 text-gray-600',
+    green: 'bg-gray-50 text-gray-600',
+    purple: 'bg-gray-50 text-gray-700',
+    orange: 'bg-gray-50 text-gray-600',
+    teal: 'bg-gray-50 text-gray-600',
   };
 
   return (

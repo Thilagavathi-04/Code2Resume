@@ -15,9 +15,9 @@ const typeIcons = {
 };
 
 const typeColors = {
-  course: 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400',
-  tutorial: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400',
-  certification: 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400',
+  course: 'bg-gray-100 dark:bg-gray-900/30 text-gray-900 dark:text-gray-400',
+  tutorial: 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400',
+  certification: 'bg-gray-100 dark:bg-gray-900/30 text-gray-600 dark:text-gray-400',
 };
 
 export default function LearningRoadmap({ steps = [] }) {
@@ -41,10 +41,10 @@ export default function LearningRoadmap({ steps = [] }) {
                 className="relative pl-10"
               >
                 <div className={`absolute left-2.5 top-4 w-3 h-3 rounded-full border-2 border-white dark:border-slate-800 ${
-                  step.priority === 'high' ? 'bg-red-500' : step.priority === 'medium' ? 'bg-amber-500' : 'bg-green-500'
+                  step.priority === 'high' ? 'bg-red-500' : step.priority === 'medium' ? 'bg-gray-500' : 'bg-gray-500'
                 }`} />
 
-                <div className="p-3 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800 transition-colors">
+                <div className="p-3 rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-slate-800 hover:border-gray-200 dark:hover:border-gray-800 transition-colors">
                   <div className="flex items-start gap-3">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${typeColors[step.type] || typeColors.course}`}>
                       <Icon className="w-4 h-4" />

@@ -72,7 +72,15 @@ class ResumeEngine:
                     filtered_docs.append(doc)
             documents = filtered_docs if filtered_docs else documents
 
-        return "\n---\n".join(documents) if documents else "No project data found."
+        filtered = []
+        for doc in documents:
+            if "README:" in doc and len(doc.split("README:")[1].strip()) > 10:
+                filtered.append(doc)
+
+        if not filtered:
+            filtered = documents[:3]
+
+        return "\n---\n".join(filtered) if filtered else "No project data found."
 
     def _parse_json_response(self, content):
         content = content.strip()
@@ -117,24 +125,55 @@ class ResumeEngine:
         repo_blocks = context.split("---")
         for block in repo_blocks[:5]:
             name_match = re.search(r'Project:\s*(.+)', block)
-            desc_match = re.search(r'Description:\s*(.+)', block)
-            tech_match = re.search(r'Tech Stack:\s*(.+)', block)
-            if name_match:
-                name = name_match.group(1).strip()
-                desc = desc_match.group(1).strip() if desc_match else ""
-                techs = [t.strip() for t in tech_match.group(1).split(",")] if tech_match else []
-                tech_str = ", ".join(techs[:4]) if techs else "modern technologies"
-                projects.append({
-                    "name": name,
-                    "description": f"{desc} Built using {tech_str} to ensure scalability and maintainability.",
-                    "technologies": techs[:6],
-                    "highlights": [
-                        f"Architected and developed {name} using {tech_str}",
-                        f"Implemented core features with focus on performance and code quality",
-                        f"Deployed and maintained the application with CI/CD best practices",
-                    ],
-                    "github_url": "",
-                })
+            if not name_match:
+                continue
+            name = name_match.group(1).strip()
+
+            desc_lines = []
+            desc_match = re.search(r'Description:\s*(.+?)(?:\n|$)', block)
+            if desc_match and desc_match.group(1).strip():
+                desc_lines.append(desc_match.group(1).strip())
+
+            features_match = re.search(r'Features:\s*(.+?)(?:\n|$)', block)
+            if features_match and features_match.group(1).strip() and features_match.group(1).strip() != "None":
+                desc_lines.append(f"Key features include {features_match.group(1).strip()}.")
+
+            readme_match = re.search(r'README:\s*([\s\S]+?)(?:\nProject:|\n---|$)', block)
+            if readme_match:
+                readme_text = readme_match.group(1).strip()[:500]
+                sentences = re.split(r'[.!?\n]+', readme_text)
+                for s in sentences[:3]:
+                    s = s.strip()
+                    if len(s) > 20 and not s.startswith('#'):
+                        desc_lines.append(s)
+
+            if not desc_lines:
+                desc_lines = [
+                    f"A software project built with modern technologies.",
+                    f"Developed as part of {username}'s portfolio demonstrating technical skills.",
+                ]
+
+            description = " ".join(desc_lines[:2])
+            if len(description) > 300:
+                description = description[:297] + "..."
+
+            tech_match = re.search(r'Tech Stack:\s*(.+?)(?:\n|$)', block)
+            techs = [t.strip() for t in tech_match.group(1).split(",")] if tech_match and tech_match.group(1).strip() else []
+            tech_str = ", ".join(techs[:4]) if techs else "modern technologies"
+
+            highlights = [
+                f"Architected and developed {name} using {tech_str}",
+                f"Implemented core features with focus on performance and code quality",
+                f"Deployed and maintained the application with CI/CD best practices",
+            ]
+
+            projects.append({
+                "name": name,
+                "description": description,
+                "technologies": techs[:6],
+                "highlights": highlights,
+                "github_url": "",
+            })
 
         return {
             "personal": {"name": username, "email": email, "phone": "", "location": "", "linkedin": linkedin, "github": github, "website": leetcode},
@@ -148,14 +187,12 @@ class ResumeEngine:
         }
 
     def _call_llm(self, model, system_msg, user_msg):
-        from app.core.config import settings
-        from ollama import Client
-        client = Client(host=settings.OLLAMA_HOST, timeout=settings.LLM_TIMEOUT)
-        response = client.chat(model=model, messages=[
+        from services.llm_service import get_llm
+        messages = [
             {'role': 'system', 'content': system_msg},
             {'role': 'user', 'content': user_msg},
-        ], options={'num_gpu': 99, 'temperature': 0.3})
-        return response['message']['content']
+        ]
+        return get_llm().generate_response(messages)
 
     def generate_structured_resume(self, query, username, model, user_profile=None):
         target_domain, target_role = self._detect_domain(query)
@@ -177,16 +214,19 @@ GitHub: {github or 'not provided'}
 LinkedIn: {linkedin or 'not provided'}
 LeetCode: {leetcode or 'not provided'}
 
-Projects:
+Below is the raw project data extracted from the user's GitHub repositories. For EACH project, you MUST write a 2-sentence description based on the Description, Features, and README fields provided:
+
 {context}
 
+IMPORTANT: For each project above, use the Description, Features, and README content to write a meaningful 2-sentence description. The first sentence should explain what the project does and its purpose. The second sentence should describe the technical approach and key features implemented.
+
 Return this JSON structure exactly:
-{{"personal":{{"name":"{username}","email":"{email}","phone":"","location":"","linkedin":"{linkedin}","github":"{github}","website":"{leetcode}"}},"summary":"3-4 sentence summary for {target_role} highlighting key skills, experience domains, and career objectives","skills":[{{"name":"Skill","category":"Languages"}}],"experience":[{{"company":"Co","position":"Title","startDate":"2024-01","endDate":"2024-06","highlights":["Built X using Y reducing Z by N%"]}}],"education":[{{"institution":"Uni","degree":"BS","field":"CS","startDate":"2022","endDate":"2026","gpa":""}}],"projects":[{{"name":"Proj","description":"Two-line description: first sentence explains what the project does and its purpose, second sentence describes the technical approach and key features implemented","technologies":["Python","React"],"highlights":["Architected and built X using Y achieving Z","Implemented A feature with B reducing C by D%","Optimized E resulting in F improvement"],"github_url":""}}],"certifications":[{{"name":"Cert","issuer":"Org"}}],"section_order":["summary","skills","projects","education","certifications"]}}
+{{"personal":{{"name":"{username}","email":"{email}","phone":"","location":"","linkedin":"{linkedin}","github":"{github}","website":"{leetcode}"}},"summary":"3-4 sentence summary for {target_role} highlighting key skills, experience domains, and career objectives","skills":[{{"name":"Skill","category":"Languages"}}],"experience":[{{"company":"Co","position":"Title","startDate":"2024-01","endDate":"2024-06","highlights":["Built X using Y reducing Z by N%"]}}],"education":[{{"institution":"Uni","degree":"BS","field":"CS","startDate":"2022","endDate":"2026","gpa":""}}],"projects":[{{"name":"Proj name from data above","description":"2 sentences: what it does + how it was built, based on the Description/Features/README fields above","technologies":["tech1","tech2"],"highlights":["Architected and built X using Y achieving Z","Implemented A feature with B reducing C by D%","Optimized E resulting in F improvement"],"github_url":""}}],"certifications":[{{"name":"Cert","issuer":"Org"}}],"section_order":["summary","skills","projects","education","certifications"]}}
 
 Rules:
 - Use the user's actual email, GitHub, LinkedIn, and LeetCode URLs in the personal section
 - Extract skills from projects and categorize them properly
-- Select ALL available projects (up to 5). Each project MUST have a 2-sentence description (what it does + how it was built)
+- For EACH project listed above, write a description based on its Description, Features, and README fields. Do NOT leave descriptions empty.
 - Each project MUST have 3-4 bullet points starting with strong action verbs (Architected, Implemented, Designed, Developed, Optimized, Deployed, Led)
 - Write a detailed 3-4 sentence summary
 - If no experience, set experience to [] and add more projects with richer descriptions
@@ -204,6 +244,7 @@ Rules:
                     for key in required_keys:
                         if key not in resume_data:
                             resume_data[key] = [] if key not in ("personal", "summary", "section_order") else {} if key == "personal" else ""
+                    self._ensure_project_descriptions(resume_data, username)
                     return resume_data
                 print(f"[ResumeEngine] Attempt {attempt + 1}: invalid JSON, retrying...")
             except Exception as e:
@@ -211,6 +252,20 @@ Rules:
 
         print("[ResumeEngine] All LLM attempts failed, using fallback parser")
         return self._build_fallback_resume(username, target_role, context, user_profile=user_profile)
+
+    def _ensure_project_descriptions(self, resume_data, username):
+        projects = resume_data.get("projects", [])
+        for proj in projects:
+            desc = (proj.get("description") or "").strip()
+            if len(desc) < 20:
+                name = proj.get("name", "this project")
+                techs = proj.get("technologies", [])
+                tech_str = ", ".join(techs[:3]) if techs else "modern technologies"
+                highlights = proj.get("highlights", [])
+                if highlights:
+                    proj["description"] = f"{highlights[0].rstrip('.')}. Built with {tech_str} to deliver a robust and scalable solution."
+                else:
+                    proj["description"] = f"{name} is a software application built using {tech_str}. Developed to solve real-world problems with a focus on clean architecture and maintainability."
 
     def render_latex(self, resume_data, template_name="modern"):
         template_file = f"resume_{template_name}.tex.j2"

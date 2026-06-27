@@ -71,7 +71,7 @@ export default function SkillRadarChart({ categories = [], currentCoverage = [],
           <motion.path
             d={toPath(targetCoverage)}
             fill="rgba(139, 92, 246, 0.1)"
-            stroke="#8B5CF6"
+            stroke="#4B5563"
             strokeWidth="2"
             strokeDasharray="6 3"
             initial={{ opacity: 0, scale: 0.5 }}
@@ -84,7 +84,7 @@ export default function SkillRadarChart({ categories = [], currentCoverage = [],
         <motion.path
           d={toPath(currentCoverage)}
           fill="rgba(79, 70, 229, 0.15)"
-          stroke="#4F46E5"
+          stroke="#111827"
           strokeWidth="2"
           initial={{ opacity: 0, scale: 0.5 }}
           animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0.5 }}
@@ -100,7 +100,7 @@ export default function SkillRadarChart({ categories = [], currentCoverage = [],
               cx={p.x}
               cy={p.y}
               r="4"
-              fill="#4F46E5"
+              fill="#111827"
               initial={{ opacity: 0, scale: 0 }}
               animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0 }}
               transition={{ duration: 0.3, delay: 0.5 + i * 0.08 }}
@@ -127,12 +127,12 @@ export default function SkillRadarChart({ categories = [], currentCoverage = [],
 
       <div className="flex items-center gap-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
         <div className="flex items-center gap-1.5">
-          <span className="w-3 h-0.5 bg-indigo-600 rounded-full inline-block" />
+          <span className="w-3 h-0.5 bg-gray-900 rounded-full inline-block" />
           Current
         </div>
         {targetCoverage.length > 0 && (
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-purple-600 rounded-full inline-block border-dashed" />
+            <span className="w-3 h-0.5 bg-gray-700 rounded-full inline-block border-dashed" />
             Target
           </div>
         )}

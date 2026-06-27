@@ -98,14 +98,14 @@ export default function SkillGapAnalysis() {
   return (
     <motion.div className="space-y-6" initial="hidden" animate="visible" variants={stagger}>
       <motion.div variants={item}>
-        <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 text-white">
+        <Card className="bg-gradient-to-r from-gray-900 to-gray-700 border-0 text-white">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Target className="w-6 h-6" />
                 Skill Gap Analysis
               </h1>
-              <p className="text-indigo-100 mt-1">Identify skill gaps and get personalized learning recommendations.</p>
+              <p className="text-gray-100 mt-1">Identify skill gaps and get personalized learning recommendations.</p>
             </div>
             <Button
               onClick={handleAnalyze}
@@ -161,7 +161,7 @@ export default function SkillGapAnalysis() {
             <motion.div variants={item}>
               <Card>
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                  <CheckCircle2 className="w-4 h-4 text-gray-600" />
                   Existing Skills
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -205,7 +205,7 @@ export default function SkillGapAnalysis() {
             <motion.div variants={item}>
               <Card>
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                  <BookOpen className="w-4 h-4 text-indigo-600" />
+                  <BookOpen className="w-4 h-4 text-gray-900" />
                   Learning Recommendations
                 </h3>
                 <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
@@ -217,7 +217,7 @@ export default function SkillGapAnalysis() {
                     }, {})
                   ).map(([skill, recs]) => (
                     <div key={skill}>
-                      <p className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 mb-1.5 uppercase tracking-wide">{skill}</p>
+                      <p className="text-xs font-semibold text-gray-900 dark:text-gray-400 mb-1.5 uppercase tracking-wide">{skill}</p>
                       {recs.map((rec, i) => (
                         <motion.div
                           key={i}
@@ -264,7 +264,7 @@ export default function SkillGapAnalysis() {
             <motion.div variants={item}>
               <Card>
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-purple-600" />
+                  <TrendingUp className="w-4 h-4 text-gray-700" />
                   Skill Progress
                 </h3>
                 <SkillProgressTracker skills={progress} onMarkComplete={handleMarkComplete} />

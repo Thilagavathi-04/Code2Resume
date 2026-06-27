@@ -5,10 +5,10 @@ import Badge from '../ui/Badge';
 import Card from '../ui/Card';
 
 const scoreColor = (score) => {
-  if (score <= 30) return '#EF4444';
-  if (score <= 50) return '#F97316';
-  if (score <= 70) return '#F59E0B';
-  return '#22C55E';
+  if (score <= 30) return '#DC2626';
+  if (score <= 50) return '#9CA3AF';
+  if (score <= 70) return '#D1D5DB';
+  return '#6B7280';
 };
 
 const scoreLabel = (score) => {
@@ -58,7 +58,7 @@ export default function MatchAnalysis({ analysis }) {
       {breakdown.length > 0 && (
         <Card>
           <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-indigo-600" />
+            <TrendingUp className="w-4 h-4 text-gray-900" />
             Match Breakdown
           </h4>
           <div className="space-y-3">
@@ -73,10 +73,10 @@ export default function MatchAnalysis({ analysis }) {
                   className="flex items-center gap-3"
                 >
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                    item.score >= 70 ? 'bg-green-100 dark:bg-green-900/30' : item.score >= 40 ? 'bg-amber-100 dark:bg-amber-900/30' : 'bg-red-100 dark:bg-red-900/30'
+                    item.score >= 70 ? 'bg-gray-100 dark:bg-gray-900/30' : item.score >= 40 ? 'bg-gray-100 dark:bg-gray-900/30' : 'bg-red-100 dark:bg-red-900/30'
                   }`}>
                     <Icon className={`w-4 h-4 ${
-                      item.score >= 70 ? 'text-green-600 dark:text-green-400' : item.score >= 40 ? 'text-amber-600 dark:text-amber-400' : 'text-red-600 dark:text-red-400'
+                      item.score >= 70 ? 'text-gray-600 dark:text-gray-400' : item.score >= 40 ? 'text-gray-600 dark:text-gray-400' : 'text-red-600 dark:text-red-400'
                     }`} />
                   </div>
                   <div className="flex-1 min-w-0">
@@ -90,7 +90,7 @@ export default function MatchAnalysis({ analysis }) {
                         animate={{ width: `${item.score}%` }}
                         transition={{ duration: 0.8, delay: 0.2 + i * 0.1 }}
                         className={`h-full rounded-full ${
-                          item.score >= 70 ? 'bg-green-500' : item.score >= 40 ? 'bg-amber-500' : 'bg-red-500'
+                          item.score >= 70 ? 'bg-gray-500' : item.score >= 40 ? 'bg-gray-500' : 'bg-red-500'
                         }`}
                       />
                     </div>

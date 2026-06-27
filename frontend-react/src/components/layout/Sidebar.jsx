@@ -44,14 +44,14 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
       <div className={`flex items-center ${collapsed ? 'justify-center' : 'justify-between'} px-4 h-16 border-b border-gray-100 dark:border-gray-700`}>
         {!collapsed && (
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25">
+            <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg shadow-gray-500/25">
               <Code2 className="w-5 h-5 text-white" />
             </div>
-            <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">Code2Resume</span>
+            <span className="text-lg font-bold text-gray-900 dark:text-gray-400">Code2Resume</span>
           </div>
         )}
         {collapsed && (
-          <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/25">
+          <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shadow-lg shadow-gray-500/25">
             <Code2 className="w-5 h-5 text-white" />
           </div>
         )}
@@ -80,7 +80,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
               onClick={onMobileClose}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
+                  ? 'bg-gray-900 text-white shadow-lg shadow-gray-500/25'
                   : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
@@ -93,7 +93,7 @@ export default function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose
 
       <div className="p-3 border-t border-gray-100 dark:border-gray-700">
         <div className={`flex items-center gap-3 px-3 py-2.5 rounded-xl bg-gray-50 dark:bg-gray-800 ${collapsed ? 'justify-center' : ''}`}>
-          <div className="w-9 h-9 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
+          <div className="w-9 h-9 bg-gray-900 rounded-lg flex items-center justify-center text-white font-semibold text-sm flex-shrink-0">
             U
           </div>
           {!collapsed && (

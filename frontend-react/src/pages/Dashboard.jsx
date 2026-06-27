@@ -241,27 +241,27 @@ export default function Dashboard() {
   ];
 
   const iconBgColors = {
-    indigo: 'bg-indigo-100 dark:bg-indigo-900/30',
-    green: 'bg-green-100 dark:bg-green-900/30',
-    blue: 'bg-blue-100 dark:bg-blue-900/30',
-    purple: 'bg-purple-100 dark:bg-purple-900/30',
-    amber: 'bg-amber-100 dark:bg-amber-900/30',
+    indigo: 'bg-gray-100 dark:bg-gray-900/30',
+    green: 'bg-gray-100 dark:bg-gray-900/30',
+    blue: 'bg-gray-100 dark:bg-gray-900/30',
+    purple: 'bg-gray-100 dark:bg-gray-900/30',
+    amber: 'bg-gray-100 dark:bg-gray-900/30',
   };
 
   const iconColors = {
-    indigo: 'text-indigo-600 dark:text-indigo-400',
-    green: 'text-green-600 dark:text-green-400',
-    blue: 'text-blue-600 dark:text-blue-400',
-    purple: 'text-purple-600 dark:text-purple-400',
-    amber: 'text-amber-600 dark:text-amber-400',
+    indigo: 'text-gray-900 dark:text-gray-400',
+    green: 'text-gray-600 dark:text-gray-400',
+    blue: 'text-gray-600 dark:text-gray-400',
+    purple: 'text-gray-700 dark:text-gray-400',
+    amber: 'text-gray-600 dark:text-gray-400',
   };
 
   const circularColors = {
-    indigo: '#4F46E5',
-    green: '#16A34A',
-    blue: '#2563EB',
-    purple: '#9333EA',
-    amber: '#D97706',
+    indigo: '#111827',
+    green: '#4B5563',
+    blue: '#374151',
+    purple: '#1F2937',
+    amber: '#6B7280',
   };
 
   const displayName = user?.username || 'User';
@@ -297,11 +297,11 @@ export default function Dashboard() {
       variants={staggerContainer}
     >
       <motion.div variants={staggerItem}>
-        <Card className="bg-gradient-to-r from-indigo-600 to-indigo-700 border-0 text-white">
+        <Card className="bg-gradient-to-r from-gray-900 to-black border-0 text-white">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold">Welcome back, {displayName}</h1>
-              <p className="text-indigo-100 mt-1">Here's what's happening with your career profile.</p>
+              <p className="text-gray-100 mt-1">Here's what's happening with your career profile.</p>
             </div>
             <Button
               onClick={handleAnalyze}
@@ -320,8 +320,8 @@ export default function Dashboard() {
         <motion.div variants={staggerItem}>
           <Card>
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                <Activity className="w-4 h-4 text-indigo-600 dark:text-indigo-400 animate-pulse" />
+              <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
+                <Activity className="w-4 h-4 text-gray-900 dark:text-gray-400 animate-pulse" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900 dark:text-white">Analysis in Progress</p>
@@ -399,7 +399,7 @@ export default function Dashboard() {
           <motion.div variants={staggerItem}>
             <Card className="flex flex-col items-center">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 self-start">Interview Readiness</h3>
-              <CircularScore score={interviewCount > 0 ? Math.min(50 + interviewCount * 10, 100) : 20} size={120} color="#4F46E5" />
+              <CircularScore score={interviewCount > 0 ? Math.min(50 + interviewCount * 10, 100) : 20} size={120} color="#111827" />
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-3 text-center">
                 {interviewCount > 0
                   ? `You have ${interviewCount} interview session${interviewCount === 1 ? '' : 's'}`

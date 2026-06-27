@@ -26,10 +26,10 @@ const DATE_RANGES = [
 
 const colorMap = [
   'bg-gray-100 dark:bg-gray-800',
-  'bg-indigo-200 dark:bg-indigo-900/40',
-  'bg-indigo-300 dark:bg-indigo-800/50',
-  'bg-indigo-400 dark:bg-indigo-700/60',
-  'bg-indigo-600 dark:bg-indigo-500',
+  'bg-gray-200 dark:bg-gray-900/40',
+  'bg-gray-300 dark:bg-gray-800/50',
+  'bg-gray-400 dark:bg-black/60',
+  'bg-gray-900 dark:bg-gray-500',
 ];
 
 const containerVariants = {
@@ -161,7 +161,7 @@ export default function Analytics() {
         counts[name] = (counts[name] || 0) + 1;
       });
     });
-    const colors = ['#4F46E5', '#7C3AED', '#2563EB', '#059669', '#0891B2', '#D97706'];
+    const colors = ['#111827', '#374151', '#4B5563', '#6B7280', '#9CA3AF', '#9CA3AF'];
     return Object.entries(counts)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 6)
@@ -242,16 +242,16 @@ export default function Analytics() {
         {metrics.map((metric) => {
           const Icon = metric.icon;
           const bgColors = {
-            indigo: 'bg-indigo-100 dark:bg-indigo-900/30',
-            purple: 'bg-purple-100 dark:bg-purple-900/30',
-            green: 'bg-green-100 dark:bg-green-900/30',
-            amber: 'bg-amber-100 dark:bg-amber-900/30',
+            indigo: 'bg-gray-100 dark:bg-gray-900/30',
+            purple: 'bg-gray-100 dark:bg-gray-900/30',
+            green: 'bg-gray-100 dark:bg-gray-900/30',
+            amber: 'bg-gray-100 dark:bg-gray-900/30',
           };
           const iconColors = {
-            indigo: 'text-indigo-600 dark:text-indigo-400',
-            purple: 'text-purple-600 dark:text-purple-400',
-            green: 'text-green-600 dark:text-green-400',
-            amber: 'text-amber-600 dark:text-amber-400',
+            indigo: 'text-gray-900 dark:text-gray-400',
+            purple: 'text-gray-700 dark:text-gray-400',
+            green: 'text-gray-600 dark:text-gray-400',
+            amber: 'text-gray-600 dark:text-gray-400',
           };
           return (
             <Card key={metric.title} hover>
@@ -261,7 +261,7 @@ export default function Analytics() {
                 </div>
                 {metric.change && (
                   <span className={`inline-flex items-center gap-0.5 text-xs font-semibold ${
-                    metric.positive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
+                    metric.positive ? 'text-gray-600 dark:text-gray-400' : 'text-red-600 dark:text-red-400'
                   }`}>
                     {metric.positive ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
                     {metric.change}
@@ -320,7 +320,7 @@ export default function Analytics() {
                         width="36"
                         height={barH}
                         rx="6"
-                        fill="#4F46E5"
+                        fill="#111827"
                         className="transition-all duration-500"
                         opacity={0.85}
                       />
@@ -337,17 +337,6 @@ export default function Analytics() {
           </div>
         </Card>
 
-        <Card>
-          <div className="mb-4">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Skill Growth</h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Skills detected from your repositories</p>
-          </div>
-          {skillGrowthData.length > 0 ? (
-            <SkillGrowthChart data={skillGrowthData} height={180} />
-          ) : (
-            <div className="flex items-center justify-center h-[180px] text-sm text-gray-400">No skill data available</div>
-          )}
-        </Card>
 
         <Card>
           <div className="mb-4">

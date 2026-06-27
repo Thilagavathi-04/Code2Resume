@@ -20,7 +20,7 @@ export default function SkillChart({ skills = [], className = '' }) {
               initial={{ width: 0 }}
               animate={{ width: `${((skill.count || 1) / maxCount) * 100}%` }}
               transition={{ duration: 0.5, delay: i * 0.05 }}
-              className="h-full bg-indigo-600 dark:bg-indigo-500 rounded-full"
+              className="h-full bg-gray-900 dark:bg-gray-500 rounded-full"
             />
           </div>
         </div>

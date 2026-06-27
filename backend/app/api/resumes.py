@@ -36,8 +36,7 @@ def extract_text_from_pdf(file_bytes: bytes) -> str | None:
 
 def llm_parse_resume_text(text: str) -> dict | None:
     try:
-        import ollama as ollama_sync
-        from app.core.config import settings
+        from services.llm_service import get_llm
 
         prompt = f"""You are an expert resume parser. Convert the following resume text into a structured JSON object.
 
@@ -69,13 +68,8 @@ Rules:
 - Return ONLY the JSON, nothing else"""
 
         try:
-            model = settings.DEFAULT_MODEL
-            response = ollama_sync.chat(
-                model=model,
-                messages=[{"role": "user", "content": prompt}],
-                options={"num_gpu": 99, "temperature": 0.1}
-            )
-            content = response["message"]["content"]
+            messages = [{"role": "user", "content": prompt}]
+            content = get_llm().generate_response(messages)
 
             content = content.strip()
             if content.startswith("```json"):
@@ -740,8 +734,7 @@ async def ai_enhance_text(
     current_user_id: uuid.UUID = Depends(get_current_user),
 ):
     try:
-        import ollama as ollama_sync
-        from app.core.config import settings
+        from services.llm_service import get_llm
 
         if request.context == "summary":
             skills_str = ", ".join(request.skills) if request.skills else "various technologies"
@@ -778,13 +771,8 @@ Rules:
         else:
             return {"enhanced_text": request.text}
 
-        model = settings.DEFAULT_MODEL
-        response = ollama_sync.chat(
-            model=model,
-            messages=[{"role": "user", "content": prompt}],
-            options={"num_gpu": 99, "temperature": 0.7}
-        )
-        enhanced = response["message"]["content"].strip()
+        messages = [{"role": "user", "content": prompt}]
+        enhanced = get_llm().generate_response(messages).strip()
 
         enhanced = enhanced.strip('"').strip("'")
         if enhanced.startswith("```"):

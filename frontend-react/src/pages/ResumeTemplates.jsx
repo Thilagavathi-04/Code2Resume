@@ -89,7 +89,7 @@ export default function ResumeTemplates() {
               placeholder="Search templates..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -97,10 +97,10 @@ export default function ResumeTemplates() {
 
       {selectedTemplate && (
         <motion.div variants={staggerItem}>
-          <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/10 dark:to-purple-900/10 border-indigo-200 dark:border-indigo-800">
+          <Card className="bg-gradient-to-r from-gray-50 to-gray-50 dark:from-gray-900/10 dark:to-gray-900/10 border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
+                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                   Active Template
                 </p>
                 <p className="text-lg font-bold text-gray-900 dark:text-white">
@@ -110,13 +110,13 @@ export default function ResumeTemplates() {
               <div className="flex gap-2">
                 <button
                   onClick={() => navigate('/builder')}
-                  className="text-xs text-white bg-indigo-600 hover:bg-indigo-700 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                  className="text-xs text-white bg-gray-900 hover:bg-black px-3 py-1.5 rounded-lg font-medium transition-colors"
                 >
                   Go to Builder
                 </button>
                 <button
                   onClick={() => setSelectedTemplate(null)}
-                  className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline"
+                  className="text-xs text-gray-900 dark:text-gray-400 hover:underline"
                 >
                   Change
                 </button>

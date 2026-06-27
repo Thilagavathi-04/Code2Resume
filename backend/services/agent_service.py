@@ -1,5 +1,4 @@
-import ollama
-import os
+from services.llm_service import get_llm
 from .rag_service import RAGService
 
 
@@ -43,12 +42,10 @@ Instructions:
 - Format output clearly with Markdown.
 - Be specific about technologies and project details."""
 
-        print(f"Agent querying {model} with context length {len(context)}")
+        print(f"Agent querying with context length {len(context)}")
         try:
-            response = ollama.chat(model=model, messages=[
-                {'role': 'user', 'content': prompt},
-            ], options={'num_gpu': 99})
-            return response['message']['content']
+            messages = [{'role': 'user', 'content': prompt}]
+            return get_llm().generate_response(messages)
         except Exception as e:
             return f"Error generating response: {str(e)}"
 
@@ -84,17 +81,11 @@ Instructions:
 - Format output clearly with Markdown.
 - Be specific about technologies and project details."""
 
-        print(f"Agent streaming from {model} with context length {len(context)}")
+        print(f"Agent streaming with context length {len(context)}")
         try:
-            stream = ollama.chat(
-                model=model,
-                messages=[{'role': 'user', 'content': prompt}],
-                stream=True,
-                options={'num_gpu': 99}
-            )
-            for chunk in stream:
-                if 'message' in chunk and 'content' in chunk['message']:
-                    yield chunk['message']['content']
+            messages = [{'role': 'user', 'content': prompt}]
+            for chunk in get_llm().generate_response_stream(messages):
+                yield chunk
         except Exception as e:
             yield f"Error generating response: {str(e)}"
 

@@ -148,7 +148,7 @@ export default function Layout({ children }) {
             <a href="https://github.com/Mithrajith/Code2Resume" target="_blank" rel="noopener noreferrer" className="icon-btn">
               <Github size={20} />
             </a>
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-gray-50 text-gray-700 rounded-full text-sm">
               <Bot size={16} />
               <span>AI Ready</span>
             </div>

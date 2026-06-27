@@ -9,13 +9,13 @@ const formatDate = (dateStr) => {
 
 function SectionTitle({ children, template }) {
   const styles = {
-    modern: 'text-indigo-600 dark:text-indigo-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-1',
+    modern: 'text-gray-900 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-1',
     professional: 'text-gray-900 dark:text-white uppercase tracking-wider border-l-4 border-gray-800 dark:border-gray-200 pl-3',
-    startup: 'text-white bg-emerald-600 dark:bg-emerald-500 px-3 py-1 rounded-lg inline-block',
+    startup: 'text-white bg-gray-700 dark:bg-gray-500 px-3 py-1 rounded-lg inline-block',
     minimal: 'text-gray-900 dark:text-white',
-    creative: 'text-fuchsia-600 dark:text-fuchsia-400 font-extrabold uppercase tracking-widest text-xs',
+    creative: 'text-gray-700 dark:text-gray-400 font-extrabold uppercase tracking-widest text-xs',
     executive: 'text-slate-800 dark:text-slate-200 uppercase tracking-wider border-b-2 border-slate-800 dark:border-slate-200 pb-1',
-    technical: 'text-cyan-600 dark:text-cyan-400 font-mono uppercase tracking-wider text-xs',
+    technical: 'text-gray-600 dark:text-gray-400 font-mono uppercase tracking-wider text-xs',
   };
   return <h2 className={`text-sm font-bold mb-2 ${styles[template] || styles.modern}`}>{children}</h2>;
 }
@@ -122,7 +122,7 @@ const SECTION_RENDERERS = {
           {data.projects.map((proj, i) => (
             <div key={i}>
               <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.projects.fontSize}px` }}>{proj.name || 'Project'}</h3>
-              {proj.technologies && <p className="text-xs text-indigo-600 dark:text-indigo-400">{proj.technologies}</p>}
+              {proj.technologies && <p className="text-xs text-gray-900 dark:text-gray-400">{proj.technologies}</p>}
               <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 min-h-[2em] leading-relaxed">{proj.description || 'Project description'}</p>
             </div>
           ))}
@@ -232,7 +232,7 @@ function ModernTemplate({ personal, summary, skills, experience, education, cert
             {projects.map((proj, i) => (
               <div key={i}>
                 <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.projects.fontSize}px` }}>{proj.name || 'Project'}</h3>
-                {proj.technologies && <p className="text-xs text-indigo-600 dark:text-indigo-400">{proj.technologies}</p>}
+                {proj.technologies && <p className="text-xs text-gray-900 dark:text-gray-400">{proj.technologies}</p>}
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 min-h-[2em] leading-relaxed">{proj.description || 'Project description'}</p>
               </div>
             ))}
@@ -349,7 +349,7 @@ function StartupTemplate({ personal, summary, skills, experience, education, cer
     <div className="p-6 space-y-5">
       {personal.name && (
         <div className="flex items-center gap-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-          <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl font-bold flex-shrink-0">
+          <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center text-gray-600 dark:text-gray-400 text-xl font-bold flex-shrink-0">
             {personal.name.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -373,7 +373,7 @@ function StartupTemplate({ personal, summary, skills, experience, education, cer
           <SectionTitle template="startup">Skills</SectionTitle>
           <div className="grid grid-cols-2 gap-2">
             {skills.map((skill, i) => (
-              <div key={i} className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg font-medium text-emerald-700 dark:text-emerald-300" style={{ fontSize: `${fmt.skills.fontSize}px` }}>
+              <div key={i} className="px-3 py-1.5 bg-gray-50 dark:bg-gray-900/10 rounded-lg font-medium text-gray-700 dark:text-gray-300" style={{ fontSize: `${fmt.skills.fontSize}px` }}>
                 {skill.name}
               </div>
             ))}
@@ -389,7 +389,7 @@ function StartupTemplate({ personal, summary, skills, experience, education, cer
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.experience.fontSize}px` }}>{exp.position || 'Position'}</h3>
-                    <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">{exp.company || 'Company'}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 font-medium">{exp.company || 'Company'}</p>
                   </div>
                   <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">{formatDate(exp.startDate)} – {formatDate(exp.endDate) || 'Present'}</span>
                 </div>
@@ -407,7 +407,7 @@ function StartupTemplate({ personal, summary, skills, experience, education, cer
               <div key={i} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-900 rounded-lg">
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.education.fontSize}px` }}>{edu.degree || 'Degree'} {edu.field && `in ${edu.field}`}</h3>
-                  <p className="text-xs text-emerald-600 dark:text-emerald-400">{edu.institution || 'Institution'}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">{edu.institution || 'Institution'}</p>
                 </div>
                 <span className="text-xs text-gray-400 dark:text-gray-500">{formatDate(edu.startDate)} – {formatDate(edu.endDate)}</span>
               </div>
@@ -420,8 +420,8 @@ function StartupTemplate({ personal, summary, skills, experience, education, cer
           <SectionTitle template="startup">Certifications</SectionTitle>
           <div className="flex flex-wrap gap-2">
             {certifications.map((cert, i) => (
-              <div key={i} className="px-3 py-1.5 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg">
-                <span className="font-medium text-emerald-700 dark:text-emerald-300" style={{ fontSize: `${fmt.certifications.fontSize}px` }}>{cert.name}</span>
+              <div key={i} className="px-3 py-1.5 bg-gray-50 dark:bg-gray-900/10 rounded-lg">
+                <span className="font-medium text-gray-700 dark:text-gray-300" style={{ fontSize: `${fmt.certifications.fontSize}px` }}>{cert.name}</span>
                 {cert.issuer && <span className="text-xs text-gray-400 dark:text-gray-500 ml-1">· {cert.issuer}</span>}
               </div>
             ))}
@@ -435,7 +435,7 @@ function StartupTemplate({ personal, summary, skills, experience, education, cer
             {projects.map((proj, i) => (
               <div key={i} className="p-3 bg-gray-50 dark:bg-slate-900 rounded-lg">
                 <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.projects.fontSize}px` }}>{proj.name || 'Project'}</h3>
-                {proj.technologies && <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">{proj.technologies}</p>}
+                {proj.technologies && <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{proj.technologies}</p>}
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 min-h-[2em] leading-relaxed">{proj.description || 'Project description'}</p>
               </div>
             ))}
@@ -545,7 +545,7 @@ function CreativeTemplate({ personal, summary, skills, experience, education, ce
   const fmt = { ...defaultFormatting, ...formatting };
   return (
     <div className="flex min-h-full">
-      <div className="w-1/3 bg-gradient-to-b from-fuchsia-600 to-purple-700 text-white p-5">
+      <div className="w-1/3 bg-gradient-to-b from-gray-800 to-gray-900 text-white p-5">
         {personal.name && (
           <div className="mb-6">
             <h1 style={{ fontSize: `${fmt.name.fontSize}px`, fontWeight: 'bold' }} className="text-white leading-tight">{personal.name}</h1>
@@ -594,12 +594,12 @@ function CreativeTemplate({ personal, summary, skills, experience, education, ce
             <SectionTitle template="creative">Experience</SectionTitle>
             <div className="space-y-4">
               {experience.map((exp, i) => (
-                <div key={i} className="relative pl-4 border-l-2 border-fuchsia-200 dark:border-fuchsia-800">
-                  <div className="absolute -left-[5px] top-1 w-2 h-2 bg-fuchsia-500 rounded-full" />
+                <div key={i} className="relative pl-4 border-l-2 border-gray-200 dark:border-gray-800">
+                  <div className="absolute -left-[5px] top-1 w-2 h-2 bg-gray-700 rounded-full" />
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.experience.fontSize}px` }}>{exp.position || 'Position'}</h3>
-                      <p className="text-xs text-fuchsia-600 dark:text-fuchsia-400 font-medium">{exp.company || 'Company'}</p>
+                      <p className="text-xs text-gray-700 dark:text-gray-400 font-medium">{exp.company || 'Company'}</p>
                     </div>
                     <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">{formatDate(exp.startDate)} – {formatDate(exp.endDate) || 'Present'}</span>
                   </div>
@@ -617,7 +617,7 @@ function CreativeTemplate({ personal, summary, skills, experience, education, ce
                 <div key={i} className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.education.fontSize}px` }}>{edu.degree || 'Degree'} {edu.field && `in ${edu.field}`}</h3>
-                    <p className="text-xs text-fuchsia-600 dark:text-fuchsia-400">{edu.institution || 'Institution'}</p>
+                    <p className="text-xs text-gray-700 dark:text-gray-400">{edu.institution || 'Institution'}</p>
                     {edu.gpa && <p className="text-xs text-gray-400 dark:text-gray-500">GPA: {edu.gpa}</p>}
                   </div>
                   <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap">{formatDate(edu.startDate)} – {formatDate(edu.endDate)}</span>
@@ -631,9 +631,9 @@ function CreativeTemplate({ personal, summary, skills, experience, education, ce
             <SectionTitle template="creative">Projects</SectionTitle>
             <div className="space-y-3">
               {projects.map((proj, i) => (
-                <div key={i} className="p-3 bg-fuchsia-50 dark:bg-fuchsia-900/10 rounded-lg">
+                <div key={i} className="p-3 bg-gray-50 dark:bg-gray-900/10 rounded-lg">
                   <h3 className="font-semibold text-gray-900 dark:text-white" style={{ fontSize: `${fmt.projects.fontSize}px` }}>{proj.name || 'Project'}</h3>
-                  {proj.technologies && <p className="text-xs text-fuchsia-600 dark:text-fuchsia-400 mt-0.5">{proj.technologies}</p>}
+                  {proj.technologies && <p className="text-xs text-gray-700 dark:text-gray-400 mt-0.5">{proj.technologies}</p>}
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 min-h-[2em] leading-relaxed">{proj.description || 'Project description'}</p>
                 </div>
               ))}
@@ -752,7 +752,7 @@ function TechnicalTemplate({ personal, summary, skills, experience, education, c
   return (
     <div className="p-6 space-y-5 font-sans">
       {personal.name && (
-        <div className="border-b-2 border-cyan-600 dark:border-cyan-400 pb-4">
+        <div className="border-b-2 border-gray-600 dark:border-gray-400 pb-4">
           <h1 style={{ fontSize: `${fmt.name.fontSize}px`, fontWeight: 'bold' }} className="text-gray-900 dark:text-white font-mono">{personal.name}</h1>
           <div className="flex items-center gap-4 mt-2 flex-wrap text-xs text-gray-500 dark:text-gray-400 font-mono">
             {personal.email && <span>{personal.email}</span>}
@@ -774,7 +774,7 @@ function TechnicalTemplate({ personal, summary, skills, experience, education, c
           <SectionTitle template="technical">// Skills</SectionTitle>
           <div className="flex flex-wrap gap-1.5">
             {skills.map((skill, i) => (
-              <span key={i} className="px-2 py-0.5 bg-cyan-50 dark:bg-cyan-900/20 text-cyan-700 dark:text-cyan-300 rounded border border-cyan-200 dark:border-cyan-800 font-mono text-xs">{skill.name}</span>
+              <span key={i} className="px-2 py-0.5 bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300 rounded border border-gray-200 dark:border-gray-800 font-mono text-xs">{skill.name}</span>
             ))}
           </div>
         </div>
@@ -788,7 +788,7 @@ function TechnicalTemplate({ personal, summary, skills, experience, education, c
                 <div className="flex items-start justify-between">
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white font-mono" style={{ fontSize: `${fmt.experience.fontSize}px` }}>{exp.position || 'Position'}</h3>
-                    <p className="text-xs text-cyan-600 dark:text-cyan-400 font-mono">@ {exp.company || 'Company'}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 font-mono">@ {exp.company || 'Company'}</p>
                   </div>
                   <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap font-mono">{formatDate(exp.startDate)} – {formatDate(exp.endDate) || 'Present'}</span>
                 </div>
@@ -806,7 +806,7 @@ function TechnicalTemplate({ personal, summary, skills, experience, education, c
               <div key={i} className="flex items-start justify-between">
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-white font-mono" style={{ fontSize: `${fmt.education.fontSize}px` }}>{edu.degree || 'Degree'} {edu.field && `in ${edu.field}`}</h3>
-                  <p className="text-xs text-cyan-600 dark:text-cyan-400 font-mono">{edu.institution || 'Institution'}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 font-mono">{edu.institution || 'Institution'}</p>
                   {edu.gpa && <p className="text-xs text-gray-400 dark:text-gray-500 font-mono">GPA: {edu.gpa}</p>}
                 </div>
                 <span className="text-xs text-gray-400 dark:text-gray-500 whitespace-nowrap font-mono">{formatDate(edu.startDate)} – {formatDate(edu.endDate)}</span>
@@ -835,7 +835,7 @@ function TechnicalTemplate({ personal, summary, skills, experience, education, c
             {projects.map((proj, i) => (
               <div key={i} className="p-3 bg-gray-50 dark:bg-slate-900 rounded-lg border border-gray-100 dark:border-gray-700">
                 <h3 className="font-semibold text-gray-900 dark:text-white font-mono" style={{ fontSize: `${fmt.projects.fontSize}px` }}>{proj.name || 'Project'}</h3>
-                {proj.technologies && <p className="text-xs text-cyan-600 dark:text-cyan-400 font-mono mt-0.5">[{proj.technologies}]</p>}
+                {proj.technologies && <p className="text-xs text-gray-600 dark:text-gray-400 font-mono mt-0.5">[{proj.technologies}]</p>}
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 min-h-[2em] leading-relaxed font-mono">{proj.description || 'Project description'}</p>
               </div>
             ))}
@@ -894,7 +894,7 @@ function OrderedSections({ data, template, formatting, sectionOrder }) {
           );
           if (template === 'startup') return (
             <div key="personal" className="flex items-center gap-4 pb-4 border-b border-gray-100 dark:border-gray-700">
-              <div className="w-14 h-14 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-xl font-bold flex-shrink-0">
+              <div className="w-14 h-14 rounded-full bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center text-gray-600 dark:text-gray-400 text-xl font-bold flex-shrink-0">
                 {personal.name.charAt(0).toUpperCase()}
               </div>
               <div>
@@ -920,7 +920,7 @@ function OrderedSections({ data, template, formatting, sectionOrder }) {
           );
           if (template === 'creative') return (
             <div key="personal" className="flex">
-              <div className="w-1/3 bg-gradient-to-b from-fuchsia-600 to-purple-700 text-white p-5 -m-6 mb-0 rounded-r-none">
+              <div className="w-1/3 bg-gradient-to-b from-gray-800 to-gray-900 text-white p-5 -m-6 mb-0 rounded-r-none">
                 <h1 style={{ fontSize: `${fmt.name.fontSize}px`, fontWeight: 'bold' }} className="text-white leading-tight">{personal.name}</h1>
                 <div className="space-y-1 mt-2 text-xs text-white/80">
                   {personal.email && <p className="break-all">{personal.email}</p>}
@@ -943,7 +943,7 @@ function OrderedSections({ data, template, formatting, sectionOrder }) {
             </div>
           );
           if (template === 'technical') return (
-            <div key="personal" className="border-b-2 border-cyan-600 dark:border-cyan-400 pb-4">
+            <div key="personal" className="border-b-2 border-gray-600 dark:border-gray-400 pb-4">
               <h1 style={{ fontSize: `${fmt.name.fontSize}px`, fontWeight: 'bold' }} className="text-gray-900 dark:text-white font-mono">{personal.name}</h1>
               <div className="flex items-center gap-4 mt-2 flex-wrap text-xs text-gray-500 dark:text-gray-400 font-mono">
                 {personal.email && <span>{personal.email}</span>}

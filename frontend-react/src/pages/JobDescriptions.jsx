@@ -88,20 +88,20 @@ export default function JobDescriptions() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-indigo-500" /></div>;
+    return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-gray-500" /></div>;
   }
 
   return (
     <motion.div className="space-y-6" initial="hidden" animate="visible" variants={stagger}>
       <motion.div variants={item}>
-        <Card className="bg-gradient-to-r from-purple-600 to-indigo-600 border-0 text-white">
+        <Card className="bg-gradient-to-r from-gray-700 to-gray-800 border-0 text-white">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Briefcase className="w-6 h-6" />
                 Job Descriptions
               </h1>
-              <p className="text-purple-100 mt-1">Create and manage job descriptions for resume targeting</p>
+              <p className="text-gray-100 mt-1">Create and manage job descriptions for resume targeting</p>
             </div>
             <Button
               onClick={() => setShowCreateModal(true)}
@@ -117,19 +117,19 @@ export default function JobDescriptions() {
 
       {selectedJobDescription && (
         <motion.div variants={item}>
-          <Card className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200 dark:border-green-800">
+          <Card className="bg-gradient-to-r from-gray-50 to-gray-50 dark:from-gray-900/10 dark:to-gray-900/10 border-gray-200 dark:border-gray-800">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                  <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                <div className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
+                  <Check className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-green-700 dark:text-green-300">Active Job Description</p>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Active Job Description</p>
                   <p className="text-lg font-bold text-gray-900 dark:text-white">{selectedJobDescription.title}</p>
                   {selectedJobDescription.company && <p className="text-sm text-gray-500 dark:text-gray-400">{selectedJobDescription.company}</p>}
                 </div>
               </div>
-              <button onClick={() => setSelectedJobDescription(null)} className="text-xs text-green-600 dark:text-green-400 hover:underline">Deselect</button>
+              <button onClick={() => setSelectedJobDescription(null)} className="text-xs text-gray-600 dark:text-gray-400 hover:underline">Deselect</button>
             </div>
           </Card>
         </motion.div>
@@ -156,16 +156,16 @@ export default function JobDescriptions() {
                 transition={{ delay: i * 0.05 }}
                 className={`bg-white dark:bg-slate-800 rounded-xl border p-5 hover:shadow-md transition-all ${
                   selectedJobDescription?.id === job.id
-                    ? 'border-green-500 ring-2 ring-green-500/20'
+                    ? 'border-gray-500 ring-2 ring-gray-500/20'
                     : 'border-gray-100 dark:border-gray-700'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-                    <Briefcase size={20} className="text-purple-600 dark:text-purple-400" />
+                  <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
+                    <Briefcase size={20} className="text-gray-700 dark:text-gray-400" />
                   </div>
                   {selectedJobDescription?.id === job.id && (
-                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                    <span className="text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400">
                       Selected
                     </span>
                   )}
@@ -178,8 +178,8 @@ export default function JobDescriptions() {
                     onClick={() => handleSelect(job)}
                     className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                       selectedJobDescription?.id === job.id
-                        ? 'bg-green-600 text-white'
-                        : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                        ? 'bg-gray-600 text-white'
+                        : 'bg-gray-900 text-white hover:bg-black'
                     }`}
                   >
                     {selectedJobDescription?.id === job.id ? <Check size={14} /> : 'Select'}

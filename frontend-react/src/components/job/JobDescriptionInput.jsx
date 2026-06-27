@@ -35,7 +35,7 @@ export default function JobDescriptionInput({ onChange }) {
             value={title}
             onChange={(e) => update('title', e.target.value)}
             placeholder="e.g. Senior Frontend Developer"
-            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
           />
         </div>
         <div>
@@ -45,7 +45,7 @@ export default function JobDescriptionInput({ onChange }) {
             value={company}
             onChange={(e) => update('company', e.target.value)}
             placeholder="e.g. Google"
-            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
           />
         </div>
       </div>
@@ -60,7 +60,7 @@ export default function JobDescriptionInput({ onChange }) {
             onChange={(e) => update('description', e.target.value)}
             placeholder="Paste the full job description here..."
             rows={8}
-            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 resize-none"
           />
           <Button
             variant="ghost"

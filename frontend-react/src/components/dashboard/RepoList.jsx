@@ -23,8 +23,8 @@ export default function RepoList({ repos }) {
             <h2 className="text-lg font-bold text-gray-900">Your Repositories</h2>
             <p className="text-sm text-gray-500">{repos.length} repositories analyzed</p>
           </div>
-          <div className="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center">
-            <FolderGit2 size={20} className="text-teal-600" />
+          <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
+            <FolderGit2 size={20} className="text-gray-600" />
           </div>
         </div>
 
@@ -35,7 +35,7 @@ export default function RepoList({ repos }) {
             placeholder="Search repositories..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-teal-500 focus:border-transparent outline-none transition-all"
+            className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-gray-500 focus:border-transparent outline-none transition-all"
           />
         </div>
 
@@ -47,7 +47,7 @@ export default function RepoList({ repos }) {
                 onClick={() => setSelectedDomain(domain)}
                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all duration-200 ${
                   selectedDomain === domain
-                    ? 'bg-teal-100 text-teal-700 shadow-sm'
+                    ? 'bg-gray-100 text-gray-700 shadow-sm'
                     : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
@@ -76,17 +76,17 @@ export default function RepoList({ repos }) {
             {filteredRepos.map((repo, index) => (
               <div
                 key={index}
-                className="group border border-gray-100 rounded-xl p-4 hover:border-teal-200 hover:shadow-sm transition-all duration-300 animate-fade-in-up"
+                className="group border border-gray-100 rounded-xl p-4 hover:border-gray-200 hover:shadow-sm transition-all duration-300 animate-fade-in-up"
                 style={{ animationDelay: `${index * 0.03}s` }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-gray-900 truncate group-hover:text-teal-600 transition-colors">
+                      <h3 className="font-semibold text-gray-900 truncate group-hover:text-gray-600 transition-colors">
                         {repo.name}
                       </h3>
                       {repo.stars > 0 && (
-                        <span className="flex items-center gap-1 text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                        <span className="flex items-center gap-1 text-xs text-gray-600 bg-gray-50 px-2 py-0.5 rounded-full">
                           <Star size={12} fill="currentColor" />
                           {repo.stars}
                         </span>
@@ -119,7 +119,7 @@ export default function RepoList({ repos }) {
                     )}
 
                     {repo.domain && (
-                      <span className="inline-block mt-2 text-xs bg-teal-50 text-teal-600 px-2 py-1 rounded-md font-medium">
+                      <span className="inline-block mt-2 text-xs bg-gray-50 text-gray-600 px-2 py-1 rounded-md font-medium">
                         {repo.domain}
                       </span>
                     )}

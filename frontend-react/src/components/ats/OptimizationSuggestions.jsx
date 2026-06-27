@@ -27,11 +27,11 @@ export default function OptimizationSuggestions({ suggestions = [] }) {
           >
             <button
               onClick={() => setExpanded(expanded === i ? null : i)}
-              className="w-full text-left p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-800 bg-white dark:bg-slate-800 transition-all"
+              className="w-full text-left p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-800 bg-white dark:bg-slate-800 transition-all"
             >
               <div className="flex items-start gap-3">
-                <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Lightbulb className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <div className="w-7 h-7 rounded-lg bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <Lightbulb className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">

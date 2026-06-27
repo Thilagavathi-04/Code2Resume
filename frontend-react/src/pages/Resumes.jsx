@@ -217,7 +217,7 @@ export default function Resumes() {
     }
   };
 
-  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-indigo-500" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-64"><Loader2 className="w-8 h-8 animate-spin text-gray-500" /></div>;
 
   return (
     <div className="space-y-6">
@@ -270,8 +270,8 @@ export default function Resumes() {
               style={{ animationDelay: `${index * 0.05}s` }}
             >
               <div className="flex items-start justify-between mb-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                  <FileText size={20} className="text-indigo-600 dark:text-indigo-400" />
+                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
+                  <FileText size={20} className="text-gray-900 dark:text-gray-400" />
                 </div>
                 <span className="text-xs text-gray-400 dark:text-gray-500">{resume.created_at ? new Date(resume.created_at).toLocaleDateString() : 'Recent'}</span>
               </div>
@@ -280,7 +280,7 @@ export default function Resumes() {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleViewEdit(resume)}
-                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 bg-gray-900 text-white text-sm font-medium rounded-lg hover:bg-black transition-colors"
                 >
                   <Edit3 size={14} />
                   Edit
@@ -288,7 +288,7 @@ export default function Resumes() {
                 <button
                   onClick={() => handlePreview(resume)}
                   disabled={previewLoading}
-                  className="flex items-center justify-center px-3 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 text-sm font-medium rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
+                  className="flex items-center justify-center px-3 py-2 bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400 text-sm font-medium rounded-lg hover:bg-gray-200 dark:hover:bg-gray-900/50 transition-colors"
                   title="Display resume"
                 >
                   <Eye size={14} />
@@ -325,7 +325,7 @@ export default function Resumes() {
               onChange={(e) => setGenerateQuery(e.target.value)}
               placeholder="e.g. Generate ML engineer resume, or Create a full stack developer resume..."
               rows={4}
-              className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+              className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 resize-none"
             />
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
               The AI will generate a LaTeX resume based on your analyzed GitHub projects
@@ -354,7 +354,7 @@ export default function Resumes() {
             <select
               value={previewTemplate}
               onChange={(e) => setPreviewTemplate(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               <option value="modern">Modern</option>
               <option value="professional">Professional</option>

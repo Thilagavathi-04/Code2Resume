@@ -1,7 +1,7 @@
 const colorClasses = {
-  indigo: 'bg-indigo-600',
-  green: 'bg-green-500',
-  amber: 'bg-amber-500',
+  indigo: 'bg-gray-900',
+  green: 'bg-gray-500',
+  amber: 'bg-gray-500',
   red: 'bg-red-500',
 };
 

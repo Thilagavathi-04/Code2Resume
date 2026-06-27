@@ -47,7 +47,7 @@ function Toggle({ enabled, onChange, label }) {
         type="button"
         onClick={() => onChange(!enabled)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          enabled ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'
+          enabled ? 'bg-gray-900' : 'bg-gray-200 dark:bg-gray-700'
         }`}
       >
         <span
@@ -80,7 +80,7 @@ function InputField({ label, icon: Icon, name, type = 'text', placeholder, value
           onChange={onChange}
           placeholder={placeholder}
           disabled={disabled}
-          className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all ${
+          className={`w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all ${
             disabled ? 'opacity-50 cursor-not-allowed' : ''
           }`}
         />
@@ -147,7 +147,7 @@ export default function Settings() {
     sessions: [],
   });
 
-  const [accentColor, setAccentColor] = useState('#4F46E5');
+  const [accentColor, setAccentColor] = useState('#111827');
   const [compactMode, setCompactMode] = useState(false);
 
   const fetchUserData = useCallback(async () => {
@@ -224,17 +224,17 @@ export default function Settings() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+        <Loader2 className="w-6 h-6 animate-spin text-gray-900" />
       </div>
     );
   }
 
   const accentOptions = [
-    { color: '#4F46E5', name: 'Indigo' },
-    { color: '#7C3AED', name: 'Purple' },
-    { color: '#2563EB', name: 'Blue' },
-    { color: '#059669', name: 'Green' },
-    { color: '#D97706', name: 'Amber' },
+    { color: '#111827', name: 'Indigo' },
+    { color: '#374151', name: 'Purple' },
+    { color: '#4B5563', name: 'Blue' },
+    { color: '#6B7280', name: 'Green' },
+    { color: '#9CA3AF', name: 'Amber' },
     { color: '#DC2626', name: 'Red' },
   ];
 
@@ -245,10 +245,10 @@ export default function Settings() {
           <div className="space-y-6">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-20 h-20 rounded-2xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                <div className="w-20 h-20 rounded-2xl bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center text-2xl font-bold text-gray-900 dark:text-gray-400">
                   {profile.username?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
-                <button className="absolute -bottom-1 -right-1 w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center text-white shadow-md hover:bg-indigo-700 transition-colors">
+                <button className="absolute -bottom-1 -right-1 w-7 h-7 bg-gray-900 rounded-full flex items-center justify-center text-white shadow-md hover:bg-black transition-colors">
                   <Camera className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -294,7 +294,7 @@ export default function Settings() {
                 placeholder="Tell us about yourself..."
                 value={profile.bio}
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all resize-none"
               />
             </div>
 
@@ -313,11 +313,11 @@ export default function Settings() {
             <div className="flex items-center gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700">
               <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
                 github.connected
-                  ? 'bg-green-100 dark:bg-green-900/30'
+                  ? 'bg-gray-100 dark:bg-gray-900/30'
                   : 'bg-gray-200 dark:bg-gray-700'
               }`}>
                 {github.connected ? (
-                  <Link className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  <Link className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 ) : (
                   <Unlink className="w-5 h-5 text-gray-400" />
                 )}
@@ -401,7 +401,7 @@ export default function Settings() {
               <select
                 value={aiPrefs.model}
                 onChange={(e) => setAiPrefs({ ...aiPrefs, model: e.target.value })}
-                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
               >
                 <option value="">Select a model</option>
                 <option value="gpt-4">GPT-4</option>
@@ -450,7 +450,7 @@ export default function Settings() {
                     onClick={() => setAiPrefs({ ...aiPrefs, responseStyle: style })}
                     className={`px-4 py-2.5 rounded-xl text-sm font-medium capitalize transition-all ${
                       aiPrefs.responseStyle === style
-                        ? 'bg-indigo-600 text-white shadow-md'
+                        ? 'bg-gray-900 text-white shadow-md'
                         : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
                     }`}
                   >
@@ -565,7 +565,7 @@ export default function Settings() {
                         <p className="text-xs text-gray-500 dark:text-gray-400">{session.lastActive}</p>
                       </div>
                       {session.current ? (
-                        <span className="text-xs font-medium text-green-600 dark:text-green-400">Current</span>
+                        <span className="text-xs font-medium text-gray-600 dark:text-gray-400">Current</span>
                       ) : (
                         <Button variant="ghost" size="sm">
                           <LogOut className="w-3.5 h-3.5" />
@@ -610,13 +610,13 @@ export default function Settings() {
                     }}
                     className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
                       (mode === 'dark' && isDark) || (mode === 'light' && !isDark)
-                        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/20'
+                        ? 'border-gray-600 bg-gray-50 dark:bg-gray-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                     }`}
                   >
                     <Icon className={`w-5 h-5 ${
                       (mode === 'dark' && isDark) || (mode === 'light' && !isDark)
-                        ? 'text-indigo-600'
+                        ? 'text-gray-900'
                         : 'text-gray-400'
                     }`} />
                     <span className="text-xs font-medium text-gray-700 dark:text-gray-300">{label}</span>
@@ -633,7 +633,7 @@ export default function Settings() {
                     key={opt.color}
                     onClick={() => setAccentColor(opt.color)}
                     className={`w-10 h-10 rounded-full transition-all ${
-                      accentColor === opt.color ? 'ring-2 ring-offset-2 ring-indigo-600 dark:ring-offset-slate-800' : ''
+                      accentColor === opt.color ? 'ring-2 ring-offset-2 ring-gray-600 dark:ring-offset-slate-800' : ''
                     }`}
                     style={{ backgroundColor: opt.color }}
                     title={opt.name}
@@ -679,7 +679,7 @@ export default function Settings() {
           animate={{ opacity: 1, y: 0 }}
           className={`flex items-center gap-2 p-4 rounded-xl ${
             message.type === 'success'
-              ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-800'
+              ? 'bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-800'
               : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800'
           }`}
         >
@@ -699,7 +699,7 @@ export default function Settings() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
                     activeTab === tab.id
-                      ? 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400'
+                      ? 'bg-gray-50 dark:bg-gray-900/20 text-gray-900 dark:text-gray-400'
                       : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
                 >
@@ -720,7 +720,7 @@ export default function Settings() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all ${
                   activeTab === tab.id
-                    ? 'bg-indigo-600 text-white'
+                    ? 'bg-gray-900 text-white'
                     : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400'
                 }`}
               >

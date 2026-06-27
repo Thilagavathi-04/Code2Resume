@@ -10,7 +10,7 @@ export default function Card({
     : 'bg-white dark:bg-slate-800 border border-gray-100 dark:border-gray-700 rounded-2xl p-6 shadow-sm';
   
   const hoverClasses = hover
-    ? 'hover:shadow-md hover:border-indigo-200 dark:hover:border-indigo-800 transition-all duration-300 cursor-pointer'
+    ? 'hover:shadow-md hover:border-gray-200 dark:hover:border-gray-800 transition-all duration-300 cursor-pointer'
     : '';
 
   return (

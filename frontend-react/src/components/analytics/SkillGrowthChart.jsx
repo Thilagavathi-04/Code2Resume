@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 
 const SAMPLE_DATA = [
-  { category: 'JavaScript', count: 12, color: '#4F46E5' },
-  { category: 'React', count: 9, color: '#7C3AED' },
-  { category: 'Node.js', count: 7, color: '#2563EB' },
-  { category: 'Python', count: 6, color: '#059669' },
-  { category: 'TypeScript', count: 5, color: '#0891B2' },
-  { category: 'DevOps', count: 3, color: '#D97706' },
+  { category: 'JavaScript', count: 12, color: '#111827' },
+  { category: 'React', count: 9, color: '#374151' },
+  { category: 'Node.js', count: 7, color: '#4B5563' },
+  { category: 'Python', count: 6, color: '#6B7280' },
+  { category: 'TypeScript', count: 5, color: '#9CA3AF' },
+  { category: 'DevOps', count: 3, color: '#9CA3AF' },
 ];
 
 export default function SkillGrowthChart({ data = SAMPLE_DATA, height = 200 }) {

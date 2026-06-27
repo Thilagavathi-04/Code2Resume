@@ -4,7 +4,7 @@ import SectionEditor from './SectionEditor';
 import Button from '../ui/Button';
 import v2 from '../../api/v2';
 
-const inputClass = "w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent";
+const inputClass = "w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent";
 const textareaClass = `${inputClass} resize-none`;
 
 const PROFICIENCIES = ['beginner', 'intermediate', 'advanced', 'expert'];
@@ -233,7 +233,7 @@ export default function ResumeForm({ data, onChange, sectionOrder, onReorder, cl
                 <button
                   onClick={() => handleAutoGenProject(i)}
                   disabled={enhancingProject === i || !proj.name}
-                  className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors disabled:opacity-50"
+                  className="flex items-center gap-1 text-xs px-2 py-1 rounded-md bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-900/30 transition-colors disabled:opacity-50"
                 >
                   {enhancingProject === i ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
                   {proj.description ? 'Enhance' : 'Generate'}
@@ -281,7 +281,7 @@ export default function ResumeForm({ data, onChange, sectionOrder, onReorder, cl
                   <button
                     onClick={(e) => { e.stopPropagation(); moveSection(index, -1); }}
                     disabled={!canMoveUp}
-                    className="p-0.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-0.5 text-gray-400 hover:text-gray-900 dark:hover:text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     title="Move up"
                   >
                     <ChevronUp className="w-3.5 h-3.5" />
@@ -289,7 +289,7 @@ export default function ResumeForm({ data, onChange, sectionOrder, onReorder, cl
                   <button
                     onClick={(e) => { e.stopPropagation(); moveSection(index, 1); }}
                     disabled={!canMoveDown}
-                    className="p-0.5 text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                    className="p-0.5 text-gray-400 hover:text-gray-900 dark:hover:text-gray-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                     title="Move down"
                   >
                     <ChevronDown className="w-3.5 h-3.5" />

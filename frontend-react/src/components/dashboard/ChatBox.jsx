@@ -22,8 +22,8 @@ function ResumeActionButtons({ resumeData, filename, savedResumeId, onSave, onDi
         disabled={saving || !!savedResumeId}
         className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
           savedResumeId
-            ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 cursor-default'
-            : 'bg-indigo-600 text-white hover:bg-indigo-700 disabled:opacity-50'
+            ? 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400 cursor-default'
+            : 'bg-gray-900 text-white hover:bg-black disabled:opacity-50'
         }`}
       >
         {savedResumeId ? <Check size={14} /> : saving ? <RotateCw size={14} className="animate-spin" /> : <Save size={14} />}
@@ -41,7 +41,7 @@ function ResumeActionButtons({ resumeData, filename, savedResumeId, onSave, onDi
       {resumeData && (
         <button
           onClick={onDisplay}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-900/50 transition-colors"
         >
           <Eye size={14} />
           Display Resume
@@ -76,7 +76,7 @@ function ResumePreviewModal({ isOpen, onClose, resumeData }) {
             <select
               value={template}
               onChange={(e) => setTemplate(e.target.value)}
-              className="px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-1.5 text-sm border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               <option value="modern">Modern</option>
               <option value="professional">Professional</option>
@@ -301,10 +301,10 @@ export default function ChatBox() {
           </div>
         );
       }
-      return <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono text-pink-600 dark:text-pink-400" {...props}>{children}</code>;
+      return <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-sm font-mono text-gray-600 dark:text-gray-400" {...props}>{children}</code>;
     },
     a({ children, href, ...props }) {
-      return <a href={href} target="_blank" rel="noopener noreferrer" className="text-indigo-600 dark:text-indigo-400 hover:underline" {...props}>{children}</a>;
+      return <a href={href} target="_blank" rel="noopener noreferrer" className="text-gray-900 dark:text-gray-400 hover:underline" {...props}>{children}</a>;
     },
     p({ children, ...props }) {
       return <p className="mb-2 last:mb-0 leading-relaxed" {...props}>{children}</p>;
@@ -335,7 +335,7 @@ export default function ChatBox() {
   return (
     <>
       <div className="flex flex-col rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 overflow-hidden shadow-sm" style={{ height: '520px' }}>
-        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+        <div className="flex items-center justify-between px-5 py-4 bg-gradient-to-r from-gray-900 to-gray-700 text-white">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-white/20 rounded-xl flex items-center justify-center">
               <Sparkles size={18} />
@@ -355,8 +355,8 @@ export default function ChatBox() {
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center mb-4">
-                <Bot size={32} className="text-indigo-600 dark:text-indigo-400" />
+              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900/30 rounded-2xl flex items-center justify-center mb-4">
+                <Bot size={32} className="text-gray-900 dark:text-gray-400" />
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">How can I help you?</h3>
               <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm">Ask me about your projects or request a resume generation</p>
@@ -373,13 +373,13 @@ export default function ChatBox() {
           {messages.map((msg, index) => (
             <div key={index} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'assistant' && (
-                <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                  <Bot size={16} className="text-indigo-600 dark:text-indigo-400" />
+                <div className="w-8 h-8 bg-gray-100 dark:bg-gray-900/30 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <Bot size={16} className="text-gray-900 dark:text-gray-400" />
                 </div>
               )}
               <div className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                 msg.role === 'user'
-                  ? 'bg-indigo-600 text-white rounded-br-md'
+                  ? 'bg-gray-900 text-white rounded-br-md'
                   : msg.isError
                   ? 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-bl-md'
                   : 'bg-gray-100 dark:bg-slate-700 text-gray-900 dark:text-gray-100 rounded-bl-md'
@@ -436,14 +436,14 @@ export default function ChatBox() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type your message... (Shift+Enter for new line)"
-              className="flex-1 resize-none rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="flex-1 resize-none rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-slate-800 px-4 py-3 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
               rows={1}
               disabled={loading}
             />
             <button
               type="submit"
               disabled={loading || !input.trim()}
-              className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+              className="p-3 bg-gray-900 text-white rounded-xl hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex-shrink-0"
             >
               {loading ? <RotateCw size={18} className="animate-spin" /> : <Send size={18} />}
             </button>

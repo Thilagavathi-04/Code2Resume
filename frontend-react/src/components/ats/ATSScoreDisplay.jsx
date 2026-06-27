@@ -4,10 +4,10 @@ import CircularScore from '../ui/CircularScore';
 import Badge from '../ui/Badge';
 
 const scoreColor = (score) => {
-  if (score <= 30) return '#EF4444';
-  if (score <= 50) return '#F97316';
-  if (score <= 70) return '#F59E0B';
-  return '#22C55E';
+  if (score <= 30) return '#DC2626';
+  if (score <= 50) return '#9CA3AF';
+  if (score <= 70) return '#D1D5DB';
+  return '#6B7280';
 };
 
 const scoreLabel = (score) => {
@@ -74,22 +74,22 @@ export default function ATSScoreDisplay({ score = 0, keywordsFound = 0, totalKey
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
-          className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-green-50 dark:bg-green-900/10"
+          className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/10"
         >
-          <div className="w-11 h-11 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-            <Target className="w-5 h-5 text-green-600 dark:text-green-400" />
+          <div className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
+            <Target className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </div>
           <span className="text-2xl font-bold text-gray-900 dark:text-white">{keywordsFound}/{totalKeywords}</span>
           <span className="text-xs text-gray-500 dark:text-gray-400">Keywords Found</span>
-          <div className="w-full h-1.5 bg-green-200 dark:bg-green-800 rounded-full overflow-hidden mt-1">
+          <div className="w-full h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden mt-1">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${keywordPct}%` }}
               transition={{ delay: 0.8, duration: 0.6 }}
-              className="h-full bg-green-500 rounded-full"
+              className="h-full bg-gray-500 rounded-full"
             />
           </div>
-          <span className="text-[10px] text-green-600 dark:text-green-400 font-medium">{keywordPct}% coverage</span>
+          <span className="text-[10px] text-gray-600 dark:text-gray-400 font-medium">{keywordPct}% coverage</span>
         </motion.div>
 
         <motion.div
@@ -103,7 +103,7 @@ export default function ATSScoreDisplay({ score = 0, keywordsFound = 0, totalKey
           </div>
           <span className="text-2xl font-bold text-gray-900 dark:text-white">{issues}</span>
           <span className="text-xs text-gray-500 dark:text-gray-400">Issues Found</span>
-          <span className={`text-[10px] font-medium mt-1 ${issues === 0 ? 'text-green-600 dark:text-green-400' : 'text-red-500 dark:text-red-400'}`}>
+          <span className={`text-[10px] font-medium mt-1 ${issues === 0 ? 'text-gray-600 dark:text-gray-400' : 'text-red-500 dark:text-red-400'}`}>
             {issues === 0 ? 'All clear!' : 'Needs attention'}
           </span>
         </motion.div>
@@ -112,14 +112,14 @@ export default function ATSScoreDisplay({ score = 0, keywordsFound = 0, totalKey
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/10"
+          className="flex flex-col items-center gap-2 p-4 rounded-2xl bg-gray-50 dark:bg-gray-900/10"
         >
-          <div className="w-11 h-11 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
-            <Lightbulb className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          <div className="w-11 h-11 rounded-xl bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
+            <Lightbulb className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           </div>
           <span className="text-2xl font-bold text-gray-900 dark:text-white">{suggestions}</span>
           <span className="text-xs text-gray-500 dark:text-gray-400">Suggestions</span>
-          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium mt-1">
+          <span className="text-[10px] text-gray-600 dark:text-gray-400 font-medium mt-1">
             {suggestions > 0 ? 'Review below' : 'Looking good!'}
           </span>
         </motion.div>

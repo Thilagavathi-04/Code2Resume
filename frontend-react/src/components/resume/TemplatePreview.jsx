@@ -2,9 +2,9 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 
 const gradients = {
-  modern: 'from-indigo-500 to-purple-600',
+  modern: 'from-gray-900 to-gray-700',
   professional: 'from-gray-700 to-gray-900',
-  startup: 'from-emerald-500 to-teal-600',
+  startup: 'from-gray-600 to-gray-700',
   minimal: 'from-gray-300 to-gray-400 dark:from-gray-600 dark:to-gray-700',
 };
 
@@ -18,7 +18,7 @@ function TemplateLayout({ id }) {
           <div className="h-3 w-40 bg-gray-100 dark:bg-gray-800 rounded mx-auto" />
         </div>
         <div>
-          <div className="h-4 w-32 bg-indigo-200 dark:bg-indigo-900/30 rounded mb-3" />
+          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-900/30 rounded mb-3" />
           <div className="space-y-1.5">
             <div className="h-3 w-full bg-gray-100 dark:bg-gray-700 rounded" />
             <div className="h-3 w-5/6 bg-gray-100 dark:bg-gray-700 rounded" />
@@ -27,11 +27,11 @@ function TemplateLayout({ id }) {
         </div>
         <div className="grid grid-cols-3 gap-1.5">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-6 bg-indigo-100 dark:bg-indigo-900/20 rounded" />
+            <div key={i} className="h-6 bg-gray-100 dark:bg-gray-900/20 rounded" />
           ))}
         </div>
         <div>
-          <div className="h-4 w-32 bg-indigo-200 dark:bg-indigo-900/30 rounded mb-3" />
+          <div className="h-4 w-32 bg-gray-200 dark:bg-gray-900/30 rounded mb-3" />
           <div className="space-y-3">
             <div className="flex justify-between">
               <div className="h-3 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
@@ -69,15 +69,15 @@ function TemplateLayout({ id }) {
     return (
       <div className="bg-white dark:bg-slate-800 p-8 space-y-6 shadow-lg rounded-lg">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-emerald-200 dark:bg-emerald-900/30" />
+          <div className="w-16 h-16 rounded-full bg-gray-200 dark:bg-gray-900/30" />
           <div>
             <div className="h-6 w-40 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
             <div className="h-3 w-32 bg-gray-100 dark:bg-gray-800 rounded" />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-lg">
-            <div className="h-3 w-16 bg-emerald-200 dark:bg-emerald-800/30 rounded mb-2" />
+          <div className="p-3 bg-gray-50 dark:bg-gray-900/10 rounded-lg">
+            <div className="h-3 w-16 bg-gray-200 dark:bg-gray-800/30 rounded mb-2" />
             <div className="space-y-1">
               <div className="h-2 w-full bg-gray-100 dark:bg-gray-700 rounded" />
               <div className="h-2 w-4/5 bg-gray-100 dark:bg-gray-700 rounded" />

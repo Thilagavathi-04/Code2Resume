@@ -1,9 +1,9 @@
 :root {
-  --color-primary: #4F46E5;
-  --color-primary-light: #818CF8;
-  --color-primary-dark: #3730A3;
-  --color-accent: #8B5CF6;
-  --color-accent-light: #A78BFA;
+  --color-primary: #111827;
+  --color-primary-light: #374151;
+  --color-primary-dark: #030712;
+  --color-accent: #4B5563;
+  --color-accent-light: #6B7280;
   --color-bg: #F9FAFB;
   --color-surface: #FFFFFF;
   --color-text: #111827;
@@ -13,17 +13,17 @@
 }
 
 html.dark {
-  --color-primary: #818CF8;
-  --color-primary-light: #C7D2FE;
-  --color-primary-dark: #4F46E5;
-  --color-accent: #A78BFA;
-  --color-accent-light: #C4B5FD;
-  --color-bg: #0F172A;
-  --color-surface: #1E293B;
-  --color-text: #F1F5F9;
-  --color-text-secondary: #94A3B8;
-  --color-border: #334155;
-  --color-border-light: #1E293B;
+  --color-primary: #F9FAFB;
+  --color-primary-light: #D1D5DB;
+  --color-primary-dark: #9CA3AF;
+  --color-accent: #9CA3AF;
+  --color-accent-light: #D1D5DB;
+  --color-bg: #000000;
+  --color-surface: #111827;
+  --color-text: #F9FAFB;
+  --color-text-secondary: #9CA3AF;
+  --color-border: #1F2937;
+  --color-border-light: #111827;
 }
 
 body {
@@ -50,20 +50,20 @@ html.dark body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #CBD5E1;
+  background: #D1D5DB;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94A3B8;
+  background: #9CA3AF;
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: #4B5563;
 }
 
 html.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748B;
+  background: #6B7280;
 }
 
 :focus-visible {
@@ -85,12 +85,12 @@ html.dark ::-webkit-scrollbar-thumb:hover {
 }
 
 html.dark .glass {
-  background: rgba(30, 41, 59, 0.5);
+  background: rgba(17, 24, 39, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 html.dark .glass-strong {
-  background: rgba(30, 41, 59, 0.7);
+  background: rgba(17, 24, 39, 0.7);
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
@@ -101,26 +101,26 @@ html.dark .glass-strong {
 .prose h1 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
 .prose h2 { font-size: 1.125rem; font-weight: 700; margin-bottom: 0.5rem; }
 .prose h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem; }
-.prose blockquote { border-left: 4px solid #CBD5E1; padding-left: 1rem; font-style: italic; color: #6B7280; margin: 0.5rem 0; }
-.prose a { color: #4F46E5; text-decoration: underline; }
-.prose a:hover { color: #3730A3; }
+.prose blockquote { border-left: 4px solid #D1D5DB; padding-left: 1rem; font-style: italic; color: #6B7280; margin: 0.5rem 0; }
+.prose a { color: #111827; text-decoration: underline; }
+.prose a:hover { color: #000000; }
 .prose strong { font-weight: 600; }
 .prose em { font-style: italic; }
 .prose p + p { margin-top: 0.5rem; }
 .prose > :last-child { margin-bottom: 0; }
 
-html.dark .prose blockquote { color: #94A3B8; border-color: #475569; }
-html.dark .prose a { color: #818CF8; }
-html.dark .prose a:hover { color: #A5B4FC; }
+html.dark .prose blockquote { color: #9CA3AF; border-color: #4B5563; }
+html.dark .prose a { color: #F9FAFB; }
+html.dark .prose a:hover { color: #FFFFFF; }
 
 .bg-skeleton {
-  background: linear-gradient(90deg, #E2E8F0 25%, #F1F5F9 50%, #E2E8F0 75%);
+  background: linear-gradient(90deg, #E5E7EB 25%, #F3F4F6 50%, #E5E7EB 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 
 html.dark .bg-skeleton {
-  background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+  background: linear-gradient(90deg, #1F2937 25%, #374151 50%, #1F2937 75%);
   background-size: 200% 100%;
 }
 

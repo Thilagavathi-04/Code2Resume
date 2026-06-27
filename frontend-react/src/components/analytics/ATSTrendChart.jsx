@@ -38,8 +38,8 @@ export default function ATSTrendChart({ data = SAMPLE_DATA, height = 200 }) {
       <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full" style={{ minWidth: 300 }}>
         <defs>
           <linearGradient id="atsGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#4F46E5" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#4F46E5" stopOpacity="0.02" />
+            <stop offset="0%" stopColor="#111827" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#111827" stopOpacity="0.02" />
           </linearGradient>
         </defs>
 
@@ -75,7 +75,7 @@ export default function ATSTrendChart({ data = SAMPLE_DATA, height = 200 }) {
         <polyline
           points={linePoints}
           fill="none"
-          stroke="#4F46E5"
+          stroke="#111827"
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -88,7 +88,7 @@ export default function ATSTrendChart({ data = SAMPLE_DATA, height = 200 }) {
               cx={xScale(i)}
               cy={yScale(d.score)}
               r="4"
-              fill="#4F46E5"
+              fill="#111827"
               stroke="white"
               strokeWidth="2"
               className={`transition-all duration-500 dark:stroke-slate-800 ${

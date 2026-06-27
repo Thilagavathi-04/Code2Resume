@@ -28,11 +28,11 @@ export default function SkillProgressTracker({ skills = [], onMarkComplete }) {
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   {skill.completed ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    <CheckCircle2 className="w-4 h-4 text-gray-500" />
                   ) : (
                     <div className="w-4 h-4 rounded-full border-2 border-gray-300 dark:border-gray-600" />
                   )}
-                  <span className={`text-sm font-medium ${skill.completed ? 'text-green-600 dark:text-green-400 line-through' : 'text-gray-900 dark:text-white'}`}>
+                  <span className={`text-sm font-medium ${skill.completed ? 'text-gray-600 dark:text-gray-400 line-through' : 'text-gray-900 dark:text-white'}`}>
                     {skill.name}
                   </span>
                 </div>

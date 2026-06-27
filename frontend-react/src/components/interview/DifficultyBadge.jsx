@@ -1,13 +1,13 @@
 const difficultyConfig = {
   easy: {
-    bg: 'bg-green-100 dark:bg-green-900/30',
-    text: 'text-green-700 dark:text-green-400',
-    border: 'border-green-200 dark:border-green-800',
+    bg: 'bg-gray-100 dark:bg-gray-900/30',
+    text: 'text-gray-700 dark:text-gray-400',
+    border: 'border-gray-200 dark:border-gray-800',
   },
   medium: {
-    bg: 'bg-amber-100 dark:bg-amber-900/30',
-    text: 'text-amber-700 dark:text-amber-400',
-    border: 'border-amber-200 dark:border-amber-800',
+    bg: 'bg-gray-100 dark:bg-gray-900/30',
+    text: 'text-gray-700 dark:text-gray-400',
+    border: 'border-gray-200 dark:border-gray-800',
   },
   hard: {
     bg: 'bg-red-100 dark:bg-red-900/30',

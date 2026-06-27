@@ -31,17 +31,17 @@ const icons = {
 };
 
 const colorClasses = {
-  success: 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/30 dark:border-green-800 dark:text-green-300',
+  success: 'bg-gray-50 border-gray-200 text-gray-800 dark:bg-gray-900/30 dark:border-gray-800 dark:text-gray-300',
   error: 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/30 dark:border-red-800 dark:text-red-300',
-  warning: 'bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-900/30 dark:border-amber-800 dark:text-amber-300',
-  info: 'bg-indigo-50 border-indigo-200 text-indigo-800 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-300',
+  warning: 'bg-gray-50 border-gray-200 text-gray-800 dark:bg-gray-900/30 dark:border-gray-800 dark:text-gray-300',
+  info: 'bg-gray-50 border-gray-200 text-gray-800 dark:bg-gray-900/30 dark:border-gray-800 dark:text-gray-300',
 };
 
 const iconColors = {
-  success: 'text-green-500',
+  success: 'text-gray-500',
   error: 'text-red-500',
-  warning: 'text-amber-500',
-  info: 'text-indigo-500',
+  warning: 'text-gray-500',
+  info: 'text-gray-500',
 };
 
 function Toast({ toast, onRemove }) {

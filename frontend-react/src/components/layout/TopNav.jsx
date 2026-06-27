@@ -64,7 +64,7 @@ export default function TopNav({ onMenuClick }) {
 
         <div className="relative">
           <button className="flex items-center gap-2 p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-semibold text-sm">
+            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center text-white font-semibold text-sm">
               U
             </div>
             <ChevronDown className="w-4 h-4 text-gray-400 hidden sm:block" />

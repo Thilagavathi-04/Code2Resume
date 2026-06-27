@@ -191,7 +191,7 @@ export default function ResumeBuilder() {
   if (loadingResume) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full" />
+        <div className="animate-spin w-8 h-8 border-4 border-gray-500 border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -215,8 +215,8 @@ export default function ResumeBuilder() {
           <div className="flex items-center gap-2">
             <span className={`inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${
               saveStatus === 'saved'
-                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                ? 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
+                : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400'
             }`}>
               <Save className="w-3 h-3" />
               {saveStatus === 'saved' ? 'Saved' : 'Saving...'}
@@ -263,7 +263,7 @@ export default function ResumeBuilder() {
             <select
               value={selectedTemplate}
               onChange={e => setSelectedTemplate(e.target.value)}
-              className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
             >
               <option value="modern">Modern</option>
               <option value="professional">Professional</option>

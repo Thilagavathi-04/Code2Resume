@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 export default function CircularScore({
   score = 0,
   size = 80,
-  color = '#4F46E5',
+  color = '#111827',
   label,
   className = '',
 }) {

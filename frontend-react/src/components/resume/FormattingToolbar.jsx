@@ -82,8 +82,8 @@ export default function FormattingToolbar({ formatting, onChange }) {
                         <button
                           key={value}
                           onClick={() => { updateFormat(key, 'fontSize', value); setOpenDropdown(null); }}
-                          className={`w-full text-left px-3 py-1 text-xs hover:bg-indigo-50 dark:hover:bg-indigo-900/20 ${
-                            sectionFmt.fontSize === value ? 'text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-gray-700 dark:text-gray-300'
+                          className={`w-full text-left px-3 py-1 text-xs hover:bg-gray-50 dark:hover:bg-gray-900/20 ${
+                            sectionFmt.fontSize === value ? 'text-gray-900 dark:text-gray-400 font-semibold' : 'text-gray-700 dark:text-gray-300'
                           }`}
                         >
                           {szLabel} ({value}px)
@@ -96,7 +96,7 @@ export default function FormattingToolbar({ formatting, onChange }) {
                   onClick={() => updateFormat(key, 'bold', !sectionFmt.bold)}
                   className={`p-1 rounded-lg border transition-colors ${
                     sectionFmt.bold
-                      ? 'bg-indigo-600 border-indigo-600 text-white'
+                      ? 'bg-gray-900 border-gray-600 text-white'
                       : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700'
                   }`}
                   title={sectionFmt.bold ? 'Normal' : 'Bold'}

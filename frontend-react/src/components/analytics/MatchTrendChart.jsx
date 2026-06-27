@@ -3,17 +3,17 @@ import { useEffect, useState } from 'react';
 const SAMPLE_LINES = [
   {
     label: 'Frontend Engineer',
-    color: '#4F46E5',
+    color: '#111827',
     data: [45, 52, 58, 55, 62, 68, 72, 75, 78, 82],
   },
   {
     label: 'Full Stack Developer',
-    color: '#7C3AED',
+    color: '#374151',
     data: [38, 42, 48, 50, 55, 58, 60, 65, 70, 73],
   },
   {
     label: 'React Engineer',
-    color: '#059669',
+    color: '#6B7280',
     data: [60, 62, 65, 68, 70, 72, 75, 78, 80, 85],
   },
 ];

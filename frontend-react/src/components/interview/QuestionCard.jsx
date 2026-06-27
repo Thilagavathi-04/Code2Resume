@@ -20,8 +20,8 @@ export default function QuestionCard({
       animate={{ opacity: 1, y: 0 }}
       className={`group rounded-2xl border p-5 transition-all duration-200 ${
         completed
-          ? 'bg-green-50/50 dark:bg-green-900/10 border-green-200 dark:border-green-800/50'
-          : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-800 hover:shadow-md'
+          ? 'bg-gray-50/50 dark:bg-gray-900/10 border-gray-200 dark:border-gray-800/50'
+          : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-gray-700 hover:border-gray-200 dark:hover:border-gray-800 hover:shadow-md'
       }`}
     >
       <div className="flex items-start gap-4">
@@ -29,8 +29,8 @@ export default function QuestionCard({
           onClick={onToggleComplete}
           className={`mt-0.5 flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors ${
             completed
-              ? 'bg-green-500 border-green-500 text-white'
-              : 'border-gray-300 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500'
+              ? 'bg-gray-500 border-gray-500 text-white'
+              : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500'
           }`}
         >
           {completed && <CheckCircle className="w-4 h-4" />}
@@ -55,7 +55,7 @@ export default function QuestionCard({
           <div className="flex items-center gap-1 mt-3">
             <button
               onClick={() => setExpanded(!expanded)}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 transition-colors"
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-900 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             >
               <Lightbulb className="w-3.5 h-3.5" />
               {expanded ? 'Hide hint' : 'Show hint'}
@@ -68,8 +68,8 @@ export default function QuestionCard({
               onClick={onToggleSave}
               className={`ml-auto p-1.5 rounded-lg transition-colors ${
                 saved
-                  ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30'
-                  : 'text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  ? 'text-gray-900 dark:text-gray-400 bg-gray-50 dark:bg-gray-900/30'
+                  : 'text-gray-400 hover:text-gray-900 dark:hover:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               {saved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
@@ -85,8 +85,8 @@ export default function QuestionCard({
                 transition={{ duration: 0.2 }}
                 className="overflow-hidden"
               >
-                <div className="mt-3 p-3 rounded-xl bg-indigo-50/80 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800/30">
-                  <p className="text-xs text-indigo-700 dark:text-indigo-300 leading-relaxed">
+                <div className="mt-3 p-3 rounded-xl bg-gray-50/80 dark:bg-gray-900/20 border border-gray-100 dark:border-gray-800/30">
+                  <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
                     {question.hint}
                   </p>
                 </div>

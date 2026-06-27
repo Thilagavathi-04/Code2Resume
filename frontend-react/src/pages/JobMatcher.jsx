@@ -115,14 +115,14 @@ export default function JobMatcher() {
   return (
     <motion.div className="space-y-6" initial="hidden" animate="visible" variants={stagger}>
       <motion.div variants={item}>
-        <Card className="bg-gradient-to-r from-indigo-600 to-purple-600 border-0 text-white">
+        <Card className="bg-gradient-to-r from-gray-900 to-gray-700 border-0 text-white">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold flex items-center gap-2">
                 <Target className="w-6 h-6" />
                 Job Matcher
               </h1>
-              <p className="text-indigo-100 mt-1">Compare your profile against job descriptions.</p>
+              <p className="text-gray-100 mt-1">Compare your profile against job descriptions.</p>
             </div>
             <Button
               onClick={handleAnalyze}
@@ -153,7 +153,7 @@ export default function JobMatcher() {
         <motion.div variants={item} className="lg:col-span-5 space-y-6">
           <Card>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-indigo-600" />
+              <Briefcase className="w-4 h-4 text-gray-900" />
               Select Resume
             </h3>
             {loadingData ? (
@@ -170,7 +170,7 @@ export default function JobMatcher() {
               <select
                 value={selectedResumeId}
                 onChange={(e) => setSelectedResumeId(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 <option value="">Choose a resume...</option>
                 {resumes.map(r => (
@@ -182,7 +182,7 @@ export default function JobMatcher() {
 
           <Card>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <Search className="w-4 h-4 text-purple-600" />
+              <Search className="w-4 h-4 text-gray-700" />
               Select Job Description
             </h3>
             {loadingData ? (
@@ -199,7 +199,7 @@ export default function JobMatcher() {
               <select
                 value={selectedJobId}
                 onChange={(e) => setSelectedJobId(e.target.value)}
-                className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-3 py-2.5 text-sm border border-gray-200 dark:border-gray-700 rounded-xl bg-white dark:bg-slate-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gray-500"
               >
                 <option value="">Choose a job description...</option>
                 {jobs.map(j => (
@@ -211,17 +211,17 @@ export default function JobMatcher() {
 
           <Card>
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-purple-600" />
+              <Clock className="w-4 h-4 text-gray-700" />
               Analysis History
             </h3>
             <div className="space-y-2">
               {history.map((h) => (
                 <div key={h.id} className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-900 transition-colors cursor-pointer">
                   <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 ${
-                    h.score >= 70 ? 'bg-green-100 dark:bg-green-900/30' : h.score >= 40 ? 'bg-amber-100 dark:bg-amber-900/30' : h.score === null ? 'bg-gray-100 dark:bg-gray-800' : 'bg-red-100 dark:bg-red-900/30'
+                    h.score >= 70 ? 'bg-gray-100 dark:bg-gray-900/30' : h.score >= 40 ? 'bg-gray-100 dark:bg-gray-900/30' : h.score === null ? 'bg-gray-100 dark:bg-gray-800' : 'bg-red-100 dark:bg-red-900/30'
                   }`}>
                     <span className={`text-xs font-bold ${
-                      h.score >= 70 ? 'text-green-600 dark:text-green-400' : h.score >= 40 ? 'text-amber-600 dark:text-amber-400' : h.score === null ? 'text-gray-400' : 'text-red-600 dark:text-red-400'
+                      h.score >= 70 ? 'text-gray-600 dark:text-gray-400' : h.score >= 40 ? 'text-gray-600 dark:text-gray-400' : h.score === null ? 'text-gray-400' : 'text-red-600 dark:text-red-400'
                     }`}>{h.score !== null ? `${h.score}%` : '—'}</span>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -278,7 +278,7 @@ export default function JobMatcher() {
                 <motion.div variants={item}>
                   <Card>
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                      <Search className="w-4 h-4 text-indigo-600" />
+                      <Search className="w-4 h-4 text-gray-900" />
                       Keyword Analysis
                     </h3>
                     <div className="flex flex-wrap gap-2">
@@ -305,7 +305,7 @@ export default function JobMatcher() {
                           transition={{ delay: i * 0.05 }}
                           className="flex items-start gap-2"
                         >
-                          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">{i + 1}.</span>
+                          <span className="text-xs font-bold text-gray-900 dark:text-gray-400 mt-0.5">{i + 1}.</span>
                           <span className="text-sm text-gray-700 dark:text-gray-300">{typeof imp === 'string' ? imp : imp.text || imp.description || JSON.stringify(imp)}</span>
                         </motion.div>
                       ))}

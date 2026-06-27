@@ -301,7 +301,7 @@ export default function GitHubAnalysis() {
               placeholder="Search repositories..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-sm text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent"
             />
           </div>
 
@@ -314,7 +314,7 @@ export default function GitHubAnalysis() {
                   onClick={() => setSelectedDomain(selectedDomain === domain ? null : domain)}
                   className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                     selectedDomain === domain
-                      ? 'bg-indigo-600 text-white'
+                      ? 'bg-gray-900 text-white'
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -380,7 +380,7 @@ export default function GitHubAnalysis() {
 
                   <div>
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                      <Layers className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                      <Layers className="w-4 h-4 text-gray-900 dark:text-gray-400" />
                       Technologies
                     </h3>
                     {selectedData.techs.length > 0 ? (
@@ -397,7 +397,7 @@ export default function GitHubAnalysis() {
                   {selectedData.frameworks.length > 0 && (
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                        <Wrench className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                        <Wrench className="w-4 h-4 text-gray-700 dark:text-gray-400" />
                         Frameworks
                       </h3>
                       <div className="flex flex-wrap gap-2">
@@ -411,7 +411,7 @@ export default function GitHubAnalysis() {
                   {selectedData.skills.length > 0 && (
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                        <Target className="w-4 h-4 text-green-600 dark:text-green-400" />
+                        <Target className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                         Extracted Skills
                       </h3>
                       <div className="flex flex-wrap gap-2">
@@ -425,7 +425,7 @@ export default function GitHubAnalysis() {
                   {selectedData.readme && (
                     <div>
                       <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                        <BookOpen className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                        <BookOpen className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                         README
                       </h3>
                       <div className="prose prose-sm max-w-none dark:prose-invert p-4 rounded-xl bg-gray-50 dark:bg-slate-900 max-h-96 overflow-y-auto">
@@ -436,7 +436,7 @@ export default function GitHubAnalysis() {
 
                   <div>
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                      <BarChart3 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                      <BarChart3 className="w-4 h-4 text-gray-900 dark:text-gray-400" />
                       Skill Distribution
                     </h3>
                     {selectedData.skillChart.length > 0 ? (

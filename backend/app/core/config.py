@@ -14,11 +14,16 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
     OLLAMA_HOST: str = ""
+    OLLAMA_BASE_URL: str = ""
+    OLLAMA_MODEL: str = ""
     LLM_TIMEOUT: int = 180
     DEFAULT_MODEL: str = ""
     FALLBACK_MODEL: str = ""
     MAX_TOKENS: int = 1000
     TEMPERATURE: float = 0.7
+
+    GEMINI_API_KEY: Optional[str] = None
+    GEMINI_MODEL: str = "gemini-2.0-flash"
 
     MAX_BULLET_POINTS: int = 5
     MIN_BULLET_POINTS: int = 3

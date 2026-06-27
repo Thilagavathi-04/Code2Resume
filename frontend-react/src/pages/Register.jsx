@@ -95,7 +95,7 @@ export default function Register() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative bg-gradient-to-br from-gray-900 via-indigo-700 to-gray-900 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
@@ -103,8 +103,8 @@ export default function Register() {
           }} />
         </div>
 
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-300/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gray-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gray-300/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
 
         <motion.div
           className="relative z-10 flex flex-col justify-center px-12 xl:px-20 text-white"
@@ -121,9 +121,9 @@ export default function Register() {
 
           <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-4">
             Start your journey with
-            <span className="text-indigo-200"> Code2Resume</span>
+            <span className="text-gray-200"> Code2Resume</span>
           </h1>
-          <p className="text-lg text-indigo-100 max-w-lg mb-10">
+          <p className="text-lg text-gray-100 max-w-lg mb-10">
             Join developers who use AI to create professional resumes from their code.
           </p>
 
@@ -136,10 +136,10 @@ export default function Register() {
                 transition={{ delay: 0.3 + i * 0.1 }}
                 className="flex items-center gap-3 p-3 rounded-xl bg-white/10 backdrop-blur-sm border border-white/10"
               >
-                <div className="w-6 h-6 rounded-full bg-green-400/20 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-3.5 h-3.5 text-green-300" />
+                <div className="w-6 h-6 rounded-full bg-gray-400/20 flex items-center justify-center flex-shrink-0">
+                  <Check className="w-3.5 h-3.5 text-gray-300" />
                 </div>
-                <span className="text-sm text-indigo-100">{feature}</span>
+                <span className="text-sm text-gray-100">{feature}</span>
               </motion.div>
             ))}
           </div>
@@ -154,7 +154,7 @@ export default function Register() {
           transition={{ duration: 0.5 }}
         >
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gray-900 rounded-2xl flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900 dark:text-white">Code2Resume</span>
@@ -171,9 +171,9 @@ export default function Register() {
                 <div className="flex items-center gap-2">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                     step > s.id
-                      ? 'bg-indigo-600 text-white'
+                      ? 'bg-gray-900 text-white'
                       : step === s.id
-                      ? 'bg-indigo-600 text-white ring-4 ring-indigo-100 dark:ring-indigo-900'
+                      ? 'bg-gray-900 text-white ring-4 ring-gray-100 dark:ring-gray-900'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
                   }`}>
                     {step > s.id ? <Check className="w-4 h-4" /> : s.id}
@@ -186,7 +186,7 @@ export default function Register() {
                 </div>
                 {i < steps.length - 1 && (
                   <div className={`flex-1 h-0.5 mx-3 rounded-full transition-colors duration-300 ${
-                    step > s.id ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-700'
+                    step > s.id ? 'bg-gray-900' : 'bg-gray-200 dark:bg-gray-700'
                   }`} />
                 )}
               </div>
@@ -226,7 +226,7 @@ export default function Register() {
                         value={formData.username}
                         onChange={handleChange}
                         placeholder="johndoe"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                       />
                     </div>
                     <div>
@@ -238,7 +238,7 @@ export default function Register() {
                           value={formData.password}
                           onChange={handleChange}
                           placeholder="At least 6 characters"
-                          className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all pr-12"
+                          className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all pr-12"
                         />
                         <button
                           type="button"
@@ -276,7 +276,7 @@ export default function Register() {
                         value={formData.github_url}
                         onChange={handleChange}
                         placeholder="https://github.com/username"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                       />
                     </div>
                     <div>
@@ -287,7 +287,7 @@ export default function Register() {
                         value={formData.github_token}
                         onChange={handleChange}
                         placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                       />
                       <p className="text-xs text-gray-400 dark:text-gray-500 mt-1.5">
                         Generate at GitHub Settings → Developer settings → Personal access tokens
@@ -326,7 +326,7 @@ export default function Register() {
                         value={formData.linkedin_id}
                         onChange={handleChange}
                         placeholder="your-linkedin-id"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                       />
                     </div>
                     <div>
@@ -337,7 +337,7 @@ export default function Register() {
                         value={formData.leetcode_id}
                         onChange={handleChange}
                         placeholder="your-leetcode-id"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                       />
                     </div>
                     <div>
@@ -348,7 +348,7 @@ export default function Register() {
                         value={formData.mobile_number}
                         onChange={handleChange}
                         placeholder="+1 234 567 890"
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                       />
                     </div>
                     <div className="flex gap-3 pt-4">
@@ -374,7 +374,7 @@ export default function Register() {
 
           <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
             Already have an account?{' '}
-            <Link to="/" className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors">
+            <Link to="/" className="text-gray-900 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium transition-colors">
               Sign in
             </Link>
           </p>

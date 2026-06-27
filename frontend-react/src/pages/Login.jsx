@@ -44,7 +44,7 @@ export default function Login() {
 
   return (
     <div className="min-h-screen flex">
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-900 overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative bg-gradient-to-br from-gray-900 via-indigo-700 to-gray-900 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{
             backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)',
@@ -52,8 +52,8 @@ export default function Login() {
           }} />
         </div>
 
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-300/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gray-400/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-gray-300/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/4" />
 
         <motion.div
           className="relative z-10 flex flex-col justify-center px-12 xl:px-20 text-white"
@@ -70,9 +70,9 @@ export default function Login() {
             </div>
             <h1 className="text-4xl xl:text-5xl font-bold leading-tight mb-4">
               Transform your code into a
-              <span className="text-indigo-200"> standout resume</span>
+              <span className="text-gray-200"> standout resume</span>
             </h1>
-            <p className="text-lg text-indigo-100 max-w-lg">
+            <p className="text-lg text-gray-100 max-w-lg">
               Let AI analyze your GitHub profile and craft a professional resume tailored to your domain.
             </p>
           </motion.div>
@@ -89,7 +89,7 @@ export default function Login() {
                 </div>
                 <div>
                   <p className="font-semibold text-white">{feature.title}</p>
-                  <p className="text-sm text-indigo-200">{feature.desc}</p>
+                  <p className="text-sm text-gray-200">{feature.desc}</p>
                 </div>
               </motion.div>
             ))}
@@ -105,7 +105,7 @@ export default function Login() {
           transition={{ duration: 0.5 }}
         >
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gray-900 rounded-2xl flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold text-gray-900 dark:text-white">Code2Resume</span>
@@ -136,7 +136,7 @@ export default function Login() {
                 placeholder="Enter your username"
                 value={formData.username}
                 onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                 required
               />
             </div>
@@ -151,7 +151,7 @@ export default function Login() {
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all pr-12"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-slate-900 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all pr-12"
                   required
                 />
                 <button
@@ -171,7 +171,7 @@ export default function Login() {
 
           <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
             Don't have an account?{' '}
-            <Link to="/register" className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 font-medium transition-colors">
+            <Link to="/register" className="text-gray-900 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium transition-colors">
               Create account
             </Link>
           </p>

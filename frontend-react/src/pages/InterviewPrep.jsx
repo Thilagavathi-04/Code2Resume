@@ -192,7 +192,7 @@ export default function InterviewPrep() {
               hover
               className={`cursor-pointer transition-all ${
                 activeSession?.id === session.id
-                  ? 'ring-2 ring-indigo-600 dark:ring-indigo-400'
+                  ? 'ring-2 ring-gray-600 dark:ring-gray-400'
                   : ''
               }`}
               onClick={() => {
@@ -240,8 +240,8 @@ export default function InterviewPrep() {
                   onClick={() => setActiveTab(type.id)}
                   className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-all duration-200 ${
                     activeTab === type.id
-                      ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25'
-                      : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-indigo-300 dark:hover:border-indigo-700'
+                      ? 'bg-gray-900 text-white shadow-md shadow-gray-500/25'
+                      : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-700'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -261,7 +261,7 @@ export default function InterviewPrep() {
                     placeholder="Search questions..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all"
                   />
                 </div>
                 <div className="flex gap-1.5 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
@@ -313,8 +313,8 @@ export default function InterviewPrep() {
             <div className="hidden lg:block w-72 flex-shrink-0 space-y-4">
               <Card>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center">
-                    <BarChart3 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-900/30 flex items-center justify-center">
+                    <BarChart3 className="w-5 h-5 text-gray-900 dark:text-gray-400" />
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">Statistics</p>
@@ -333,7 +333,7 @@ export default function InterviewPrep() {
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm text-gray-600 dark:text-gray-400">Completed</span>
-                      <span className="text-sm font-semibold text-green-600 dark:text-green-400">{completedCount}</span>
+                      <span className="text-sm font-semibold text-gray-600 dark:text-gray-400">{completedCount}</span>
                     </div>
                     <ProgressBar value={progressPercent} color="green" />
                   </div>
@@ -341,7 +341,7 @@ export default function InterviewPrep() {
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm text-gray-600 dark:text-gray-400">Saved</span>
-                      <span className="text-sm font-semibold text-indigo-600 dark:text-indigo-400">{savedCount}</span>
+                      <span className="text-sm font-semibold text-gray-900 dark:text-gray-400">{savedCount}</span>
                     </div>
                   </div>
 
@@ -354,7 +354,7 @@ export default function InterviewPrep() {
                         <div key={level} className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className={`w-2 h-2 rounded-full ${
-                              level === 'easy' ? 'bg-green-500' : level === 'medium' ? 'bg-amber-500' : 'bg-red-500'
+                              level === 'easy' ? 'bg-gray-500' : level === 'medium' ? 'bg-gray-500' : 'bg-red-500'
                             }`} />
                             <span className="text-sm text-gray-600 dark:text-gray-400 capitalize">{level}</span>
                           </div>
