@@ -42,6 +42,7 @@ async def get_user_repos(
 ):
     user = await user_service.get_user_by_id(db, current_user_id)
     if not user or not user.github_url:
+        print(f"[REPOS] No user or github_url for {current_user_id}")
         return []
 
     try:
@@ -49,9 +50,11 @@ async def get_user_repos(
         rag_service = RAGService()
         repos = rag_service.get_user_repos(user.username)
         if repos:
+            print(f"[REPOS] Returning {len(repos)} repos from RAG for {user.username}")
             return repos
+        print(f"[REPOS] RAG empty for {user.username}, falling back to GitHub API")
     except Exception as e:
-        print(f"RAG fetch failed, falling back to GitHub API: {e}")
+        print(f"[REPOS] RAG fetch failed for {user.username}: {e}, falling back to GitHub API")
 
     try:
         from services.github_service import GitHubService
@@ -60,12 +63,13 @@ async def get_user_repos(
         parts = parsed.path.strip('/').split('/')
         owner = parts[0] if parts else (user.username or "")
 
-        repos_url = f"{gh.base_url}/users/{owner}/repos?per_page=100&sort=updated"
+        repos_url = f"{gh.base_url}/user/repos?per_page=100&sort=updated&affiliation=owner"
+        print(f"[REPOS] Fetching from GitHub API (private repos included): {repos_url}")
         response = await asyncio.to_thread(
             lambda: __import__('requests').get(repos_url, headers=gh.headers, timeout=15)
         )
         if response.status_code != 200:
-            print(f"GitHub API returned status {response.status_code}")
+            print(f"[REPOS] GitHub API returned status {response.status_code}")
             return []
 
         raw_repos = response.json()
@@ -85,9 +89,10 @@ async def get_user_repos(
                 "updated_at": r.get("updated_at", ""),
                 "readme": "",
             })
+        print(f"[REPOS] Returning {len(repos)} repos from GitHub API for {owner}")
         return repos
     except Exception as e:
-        print(f"GitHub API fetch failed: {e}")
+        print(f"[REPOS] GitHub API fetch failed: {e}")
         return []
 
 
@@ -120,16 +125,24 @@ async def analyze_repo(
         async def run_job():
             try:
                 gh = GitHubService(user_token)
+                print(f"\n[ANALYZE] Starting single repo analysis for {target_url}")
+                t0 = datetime.now()
                 result = await gh.analyze_repository(target_url)
+                elapsed = (datetime.now() - t0).total_seconds()
+                print(f"[ANALYZE] Completed {result.get('name', '?')} in {round(elapsed, 1)}s: arch={result.get('architecture', {}).get('type', '?')}, class={result.get('classification', {}).get('primary', '?')}")
                 analysis_jobs[job_id].update(
                     status="completed", progress="Done!", result=result
                 )
                 try:
                     rag = RAGService()
                     rag.add_repo_data(result, username)
+                    print(f"[ANALYZE] RAG indexed: {result.get('name', '?')}")
                 except Exception as rag_err:
-                    print(f"RAG indexing failed: {rag_err}")
+                    print(f"[ANALYZE] RAG indexing failed: {rag_err}")
             except Exception as e:
+                print(f"[ANALYZE] FAILED: {e}")
+                import traceback
+                traceback.print_exc()
                 analysis_jobs[job_id].update(status="failed", error=str(e))
 
         asyncio.create_task(run_job())
@@ -164,47 +177,90 @@ async def analyze_all_repos(
         username = user.username if user else "unknown"
 
         async def run_bulk_job():
+            t_job_start = datetime.now()
             try:
                 gh = GitHubService(user_token)
                 parsed = urlparse(user.github_url)
                 parts = parsed.path.strip('/').split('/')
                 owner = parts[0] if parts else username
 
-                repos_url = f"{gh.base_url}/users/{owner}/repos?per_page=100&sort=updated"
+                print(f"\n{'='*60}")
+                print(f"[SYNC] Starting bulk analysis for user={username}, owner={owner}")
+                print(f"[SYNC] GitHub token: {'provided' if user_token else 'NOT provided (unauthenticated)'}")
+
+                repos_url = f"{gh.base_url}/user/repos?per_page=100&sort=updated&affiliation=owner"
+                print(f"[SYNC] Fetching repos (private repos included): {repos_url}")
                 response = await asyncio.to_thread(
                     lambda: __import__('requests').get(repos_url, headers=gh.headers, timeout=15)
                 )
                 if response.status_code != 200:
-                    analysis_jobs[job_id].update(status="failed", error=f"GitHub API error: {response.status_code}")
+                    error_msg = f"GitHub API error: status {response.status_code}"
+                    print(f"[SYNC] FAILED to list repos: {error_msg}")
+                    analysis_jobs[job_id].update(status="failed", error=error_msg)
                     return
 
                 repos = response.json()
+                print(f"[SYNC] Found {len(repos)} repositories for {owner}")
                 results = []
                 rag = RAGService()
 
+                succeeded = 0
+                failed = 0
                 for i, repo in enumerate(repos):
-                    analysis_jobs[job_id]["progress"] = f"Analyzing {i+1}/{len(repos)}: {repo.get('name', '')}"
+                    repo_name = repo.get('name', 'unknown')
+                    repo_url = repo.get("html_url", "")
+                    analysis_jobs[job_id]["progress"] = f"Analyzing {i+1}/{len(repos)}: {repo_name}"
+                    print(f"[SYNC] [{i+1}/{len(repos)}] Analyzing {repo_name}...")
+
+                    if not repo_url:
+                        print(f"[SYNC] [{i+1}/{len(repos)}] SKIP {repo_name}: no html_url")
+                        failed += 1
+                        continue
+
                     try:
-                        repo_url = repo.get("html_url", "")
-                        if repo_url:
-                            result = await gh.analyze_repository(repo_url)
-                            result["stars"] = repo.get("stargazers_count", 0)
-                            results.append(result)
-                            try:
-                                rag.add_repo_data(result, username)
-                            except Exception:
-                                pass
+                        t_repo = datetime.now()
+                        result = await gh.analyze_repository(repo_url, skip_semantic=True)
+                        result["stars"] = repo.get("stargazers_count", 0)
+                        elapsed = (datetime.now() - t_repo).total_seconds()
+
+                        tech_count = len(result.get("tech_stack_flat", []))
+                        arch_type = result.get("architecture", {}).get("type", "?")
+                        classification = result.get("classification", {}).get("primary", "?")
+                        has_semantic = bool(result.get("semantic_analysis"))
+
+                        print(f"[SYNC] [{i+1}/{len(repos)}] OK {repo_name} ({round(elapsed, 1)}s): arch={arch_type}, class={classification}, techs={tech_count}, semantic={'yes' if has_semantic else 'no'}")
+
+                        results.append(result)
+
+                        try:
+                            rag.add_repo_data(result, username)
+                            print(f"[SYNC] [{i+1}/{len(repos)}] RAG indexed: {repo_name}")
+                        except Exception as rag_err:
+                            print(f"[SYNC] [{i+1}/{len(repos)}] RAG FAILED for {repo_name}: {rag_err}")
+
+                        succeeded += 1
                     except Exception as e:
-                        print(f"Failed to analyze {repo.get('name')}: {e}")
+                        elapsed = (datetime.now() - t_repo).total_seconds()
+                        print(f"[SYNC] [{i+1}/{len(repos)}] FAILED {repo_name} ({round(elapsed, 1)}s): {e}")
+                        failed += 1
+
+                total_elapsed = (datetime.now() - t_job_start).total_seconds()
+                print(f"[SYNC] Bulk analysis complete: {succeeded} succeeded, {failed} failed, {len(results)} results, {round(total_elapsed, 1)}s total")
+                print(f"{'='*60}\n")
 
                 analysis_jobs[job_id].update(
                     status="completed", progress="Done!", result=results
                 )
             except Exception as e:
+                total_elapsed = (datetime.now() - t_job_start).total_seconds()
+                print(f"[SYNC] FATAL error after {round(total_elapsed, 1)}s: {e}")
+                import traceback
+                traceback.print_exc()
                 analysis_jobs[job_id].update(status="failed", error=str(e))
 
         asyncio.create_task(run_bulk_job())
     except Exception as e:
+        print(f"[SYNC] Failed to start bulk job: {e}")
         analysis_jobs[job_id].update(status="failed", error=str(e))
 
     return {"job_id": job_id, "status": "started"}
@@ -268,10 +324,23 @@ async def ask_agent(
 ):
     user = await user_service.get_user_by_id(db, current_user_id)
     username = user.username if user else "unknown"
+    user_profile = {
+        "email": user.email if user else "",
+        "github": user.github_url if user else "",
+        "linkedin": user.linkedin_id if user else "",
+        "leetcode": user.leetcode_id if user else "",
+        "phone": user.mobile_number if user else "",
+        "education_institution": user.education_institution if user else "",
+        "education_degree": user.education_degree if user else "",
+        "education_field": user.education_field if user else "",
+        "education_start_date": user.education_start_date if user else "",
+        "education_end_date": user.education_end_date if user else "",
+        "education_gpa": user.education_gpa if user else "",
+    }
     try:
         from services.agent_service import AgentService
         agent = AgentService()
-        response = await asyncio.to_thread(agent.ask, request.query, username=username)
+        response = await asyncio.to_thread(agent.ask, request.query, username=username, user_profile=user_profile)
         return {"response": response}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -285,12 +354,25 @@ async def ask_agent_stream(
 ):
     user = await user_service.get_user_by_id(db, current_user_id)
     username = user.username if user else "unknown"
+    user_profile = {
+        "email": user.email if user else "",
+        "github": user.github_url if user else "",
+        "linkedin": user.linkedin_id if user else "",
+        "leetcode": user.leetcode_id if user else "",
+        "phone": user.mobile_number if user else "",
+        "education_institution": user.education_institution if user else "",
+        "education_degree": user.education_degree if user else "",
+        "education_field": user.education_field if user else "",
+        "education_start_date": user.education_start_date if user else "",
+        "education_end_date": user.education_end_date if user else "",
+        "education_gpa": user.education_gpa if user else "",
+    }
     try:
         from services.agent_service import AgentService
         agent = AgentService()
 
         def generate():
-            for token in agent.ask_stream(request.query, username=username):
+            for token in agent.ask_stream(request.query, username=username, user_profile=user_profile):
                 yield f"data: {json.dumps({'token': token})}\n\n"
 
         return StreamingResponse(generate(), media_type="text/event-stream")

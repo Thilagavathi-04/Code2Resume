@@ -7,6 +7,30 @@ const formatDate = (dateStr) => {
   return `${months[parseInt(month, 10) - 1] || ''} ${year}`;
 };
 
+function groupSkillsByCategory(skills) {
+  const groups = {};
+  for (const skill of skills) {
+    const cat = skill.category || 'Other';
+    if (!groups[cat]) groups[cat] = [];
+    groups[cat].push(skill.name);
+  }
+  return groups;
+}
+
+function SkillsByCategory({ skills, className = '', itemClassName = '' }) {
+  const groups = groupSkillsByCategory(skills);
+  return (
+    <div className={className}>
+      {Object.entries(groups).map(([cat, names]) => (
+        <div key={cat} className="mb-1">
+          <span className="font-semibold text-gray-900 dark:text-white">{cat}:</span>{' '}
+          <span className="text-gray-600 dark:text-gray-300">{names.join(', ')}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function SectionTitle({ children, template }) {
   const styles = {
     modern: 'text-gray-900 dark:text-gray-400 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700 pb-1',
@@ -46,12 +70,8 @@ const SECTION_RENDERERS = {
     if (!data.skills.length) return null;
     return { key: 'skills', content: (
       <div>
-        <SectionTitle template={Template}>Skills</SectionTitle>
-        <div className="flex flex-wrap gap-1.5">
-          {data.skills.map((skill, i) => (
-            <span key={i} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded font-medium" style={{ fontSize: `${fmt.skills.fontSize}px` }}>{skill.name}</span>
-          ))}
-        </div>
+        <SectionTitle template={Template}>Technical Skills</SectionTitle>
+        <SkillsByCategory skills={data.skills} className="text-sm" />
       </div>
     )};
   },
@@ -155,8 +175,9 @@ function ModernTemplate({ personal, summary, skills, experience, education, cert
             {personal.email && <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400"><Mail className="w-3 h-3" /> {personal.email}</span>}
             {personal.phone && <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400"><Phone className="w-3 h-3" /> {personal.phone}</span>}
             {personal.location && <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400"><MapPin className="w-3 h-3" /> {personal.location}</span>}
-            {personal.website && <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400"><Globe className="w-3 h-3" /> {personal.website}</span>}
-            {personal.linkedin && <span className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400"><Linkedin className="w-3 h-3" /> LinkedIn</span>}
+            {personal.github && <a href={personal.github} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:underline"><Globe className="w-3 h-3" /> GitHub</a>}
+            {personal.linkedin && <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:underline"><Linkedin className="w-3 h-3" /> LinkedIn</a>}
+            {personal.website && <a href={personal.website} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 hover:underline"><Globe className="w-3 h-3" /> LeetCode</a>}
           </div>
         </div>
       )}
@@ -168,12 +189,8 @@ function ModernTemplate({ personal, summary, skills, experience, education, cert
       )}
       {skills.length > 0 && (
         <div>
-          <SectionTitle template="modern" formatting={fmt}>Skills</SectionTitle>
-          <div className="flex flex-wrap gap-1.5">
-            {skills.map((skill, i) => (
-              <span key={i} className="px-2 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded font-medium" style={{ fontSize: `${fmt.skills.fontSize}px` }}>{skill.name}</span>
-            ))}
-          </div>
+          <SectionTitle template="modern" formatting={fmt}>Technical Skills</SectionTitle>
+          <SkillsByCategory skills={skills} className="text-sm" />
         </div>
       )}
       {experience.length > 0 && (
@@ -267,12 +284,8 @@ function ProfessionalTemplate({ personal, summary, skills, experience, education
       )}
       {skills.length > 0 && (
         <div>
-          <SectionTitle template="professional" formatting={fmt}>Skills</SectionTitle>
-          <div className="pl-3 text-gray-600 dark:text-gray-300" style={{ fontSize: `${fmt.skills.fontSize}px` }}>
-            {skills.map((s, i) => (
-              <span key={i}>{s.name}{i < skills.length - 1 ? ', ' : ''}</span>
-            ))}
-          </div>
+          <SectionTitle template="professional" formatting={fmt}>Technical Skills</SectionTitle>
+          <SkillsByCategory skills={skills} className="text-sm" />
         </div>
       )}
       {experience.length > 0 && (
@@ -370,14 +383,8 @@ function StartupTemplate({ personal, summary, skills, experience, education, cer
       )}
       {skills.length > 0 && (
         <div>
-          <SectionTitle template="startup">Skills</SectionTitle>
-          <div className="grid grid-cols-2 gap-2">
-            {skills.map((skill, i) => (
-              <div key={i} className="px-3 py-1.5 bg-gray-50 dark:bg-gray-900/10 rounded-lg font-medium text-gray-700 dark:text-gray-300" style={{ fontSize: `${fmt.skills.fontSize}px` }}>
-                {skill.name}
-              </div>
-            ))}
-          </div>
+          <SectionTitle template="startup" formatting={fmt}>Technical Skills</SectionTitle>
+          <SkillsByCategory skills={skills} className="text-sm" />
         </div>
       )}
       {experience.length > 0 && (
@@ -469,12 +476,8 @@ function MinimalTemplate({ personal, summary, skills, experience, education, cer
       )}
       {skills.length > 0 && (
         <div>
-          <SectionTitle template="minimal">Skills</SectionTitle>
-          <p className="text-gray-600 dark:text-gray-300" style={{ fontSize: `${fmt.skills.fontSize}px` }}>
-            {skills.map((s, i) => (
-              <span key={i}>{s.name}{i < skills.length - 1 ? ' · ' : ''}</span>
-            ))}
-          </p>
+          <SectionTitle template="minimal" formatting={fmt}>Technical Skills</SectionTitle>
+          <SkillsByCategory skills={skills} className="text-sm" />
         </div>
       )}
       {experience.length > 0 && (
@@ -560,12 +563,8 @@ function CreativeTemplate({ personal, summary, skills, experience, education, ce
         </div>
         {skills.length > 0 && (
           <div className="mt-6">
-            <h2 className="text-xs font-bold uppercase tracking-widest text-white/60 mb-2">Skills</h2>
-            <div className="flex flex-wrap gap-1.5">
-              {skills.map((skill, i) => (
-                <span key={i} className="px-2 py-0.5 bg-white/20 text-white rounded text-xs font-medium">{skill.name}</span>
-              ))}
-            </div>
+            <h2 className="text-xs font-bold uppercase tracking-widest text-white/60 mb-2">Technical Skills</h2>
+            <SkillsByCategory skills={skills} className="text-sm text-white/80" />
           </div>
         )}
         {certifications.length > 0 && (
@@ -669,15 +668,8 @@ function ExecutiveTemplate({ personal, summary, skills, experience, education, c
       )}
       {skills.length > 0 && (
         <div>
-          <SectionTitle template="executive">Core Competencies</SectionTitle>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-1 pl-4 text-sm text-gray-700 dark:text-gray-300" style={{ fontSize: `${fmt.skills.fontSize}px` }}>
-            {skills.map((skill, i) => (
-              <span key={i} className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 bg-slate-800 dark:bg-slate-200 rounded-full flex-shrink-0" />
-                {skill.name}
-              </span>
-            ))}
-          </div>
+          <SectionTitle template="executive">Technical Skills</SectionTitle>
+          <SkillsByCategory skills={skills} className="text-sm pl-4" />
         </div>
       )}
       {experience.length > 0 && (
@@ -772,11 +764,7 @@ function TechnicalTemplate({ personal, summary, skills, experience, education, c
       {skills.length > 0 && (
         <div>
           <SectionTitle template="technical">// Skills</SectionTitle>
-          <div className="flex flex-wrap gap-1.5">
-            {skills.map((skill, i) => (
-              <span key={i} className="px-2 py-0.5 bg-gray-50 dark:bg-gray-900/20 text-gray-700 dark:text-gray-300 rounded border border-gray-200 dark:border-gray-800 font-mono text-xs">{skill.name}</span>
-            ))}
-          </div>
+          <SkillsByCategory skills={skills} className="text-sm font-mono" />
         </div>
       )}
       {experience.length > 0 && (

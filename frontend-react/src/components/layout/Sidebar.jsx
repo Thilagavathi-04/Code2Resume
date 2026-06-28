@@ -32,6 +32,7 @@ const navItems = [
   // { path: '/skills', label: 'Skill Gap Analysis', icon: BarChart3 },
   // { path: '/interview', label: 'Interview Prep', icon: MessageSquare },
   { path: '/analytics', label: 'Analytics', icon: LineChart },
+  { path: '/chat', label: 'AI Chat', icon: MessageSquare },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 

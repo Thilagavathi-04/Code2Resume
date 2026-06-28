@@ -25,6 +25,12 @@ class UserUpdate(BaseModel):
     leetcode_id: Optional[str] = None
     mobile_number: Optional[str] = None
     avatar_url: Optional[str] = None
+    education_institution: Optional[str] = None
+    education_degree: Optional[str] = None
+    education_field: Optional[str] = None
+    education_start_date: Optional[str] = None
+    education_end_date: Optional[str] = None
+    education_gpa: Optional[str] = None
     is_active: Optional[bool] = None
 
 
@@ -39,6 +45,12 @@ class UserResponse(BaseModel):
     leetcode_id: Optional[str] = None
     mobile_number: Optional[str] = None
     avatar_url: Optional[str] = None
+    education_institution: Optional[str] = None
+    education_degree: Optional[str] = None
+    education_field: Optional[str] = None
+    education_start_date: Optional[str] = None
+    education_end_date: Optional[str] = None
+    education_gpa: Optional[str] = None
     is_active: bool
     created_at: datetime
     updated_at: Optional[datetime] = None

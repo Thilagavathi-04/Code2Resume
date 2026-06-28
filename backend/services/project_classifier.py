@@ -1,3 +1,5 @@
+import re
+
 CATEGORIES = {
     "Machine Learning": {
         "tech_keywords": [
@@ -357,5 +359,3 @@ def compute_scores(name: str, description: str, tech_stack: list, readme: str = 
         "final_score": round(final_score, 2),
     }
 
-
-import re

@@ -74,13 +74,17 @@ class ResumeEngine:
 
         filtered = []
         for doc in documents:
-            if "README:" in doc and len(doc.split("README:")[1].strip()) > 10:
+            if "Project:" in doc:
                 filtered.append(doc)
 
         if not filtered:
             filtered = documents[:3]
 
-        return "\n---\n".join(filtered) if filtered else "No project data found."
+        context = "\n---\n".join(filtered) if filtered else "No project data found."
+        max_context_chars = 12000
+        if len(context) > max_context_chars:
+            context = context[:max_context_chars] + "\n... (truncated)"
+        return context
 
     def _parse_json_response(self, content):
         content = content.strip()
@@ -108,17 +112,23 @@ class ResumeEngine:
         github = profile.get("github", "")
         linkedin = profile.get("linkedin", "")
         leetcode = profile.get("leetcode", "")
+        phone = profile.get("phone", "")
+        edu_institution = profile.get("education_institution", "")
+        edu_degree = profile.get("education_degree", "")
+        edu_field = profile.get("education_field", "")
+        edu_start = profile.get("education_start_date", "")
+        edu_end = profile.get("education_end_date", "")
+        edu_gpa = profile.get("education_gpa", "")
         skills = []
         skill_pattern = re.findall(r'(?:Python|JavaScript|TypeScript|React|Node\.?js|Flask|Django|FastAPI|PostgreSQL|MongoDB|MySQL|Docker|Kubernetes|AWS|Git|TensorFlow|PyTorch|Scikit-learn|OpenCV|Pandas|NumPy|HTML|CSS|Java|C\+\+|Go|Rust|Ruby|PHP|Swift|Kotlin|Flutter|Redis|GraphQL|REST|API|LLM|NLP|Machine Learning|Deep Learning|AI|Data Science|Spark|Hadoop|Airflow|Linux|Bash|Shell|CI/CD|Terraform|Ansible)', context, re.I)
         seen_skills = set()
         for s in skill_pattern:
             if s.lower() not in seen_skills:
                 seen_skills.add(s.lower())
-                cat = "Languages" if s.lower() in ("python", "javascript", "typescript", "java", "c++", "go", "rust", "ruby", "php", "swift", "kotlin", "html", "css", "bash", "shell") else \
-                      "Frameworks" if s.lower() in ("react", "node.js", "nodejs", "flask", "django", "fastapi", "flutter", "graphql") else \
-                      "Databases" if s.lower() in ("postgresql", "mongodb", "mysql", "redis") else \
-                      "ML/AI" if s.lower() in ("tensorflow", "pytorch", "scikit-learn", "opencv", "pandas", "numpy", "llm", "nlp", "machine learning", "deep learning", "ai", "data science") else \
-                      "Tools" if s.lower() in ("docker", "kubernetes", "aws", "git", "linux", "ci/cd", "terraform", "ansible", "spark", "hadoop", "airflow", "rest", "api") else "Other"
+                cat = "Programming Languages" if s.lower() in ("python", "javascript", "typescript", "java", "c++", "go", "rust", "ruby", "php", "swift", "kotlin", "html", "css", "bash", "shell", "sql") else \
+                      "Core Areas" if s.lower() in ("machine learning", "deep learning", "AI", "data science", "nlp", "llm", "computer vision", "rag") else \
+                      "Libraries & Frameworks" if s.lower() in ("react", "node.js", "nodejs", "flask", "django", "fastapi", "flutter", "graphql", "tensorflow", "pytorch", "scikit-learn", "opencv", "pandas", "numpy", "langchain", "faiss") else \
+                      "Tools & Platforms" if s.lower() in ("docker", "kubernetes", "aws", "Git", "linux", "ci/cd", "terraform", "ansible", "spark", "hadoop", "airflow", "rest", "api", "firebase", "ollama", "postgresql", "mongodb", "mysql", "redis") else "Other"
                 skills.append({"name": s, "category": cat})
 
         projects = []
@@ -168,7 +178,7 @@ class ResumeEngine:
             ]
 
             projects.append({
-                "name": name,
+                "name": f"{name} – {desc_lines[0][:60] if desc_lines else 'Software Project'}",
                 "description": description,
                 "technologies": techs[:6],
                 "highlights": highlights,
@@ -176,15 +186,30 @@ class ResumeEngine:
             })
 
         return {
-            "personal": {"name": username, "email": email, "phone": "", "location": "", "linkedin": linkedin, "github": github, "website": leetcode},
+            "personal": {"name": username, "email": email, "phone": phone, "location": "", "linkedin": linkedin, "github": github, "website": leetcode},
             "summary": f"Results-driven {target_role} with hands-on experience in {', '.join(list(seen_skills)[:6])}. Proven track record of building scalable applications and delivering end-to-end solutions. Passionate about leveraging modern technologies to solve complex technical challenges and drive measurable impact.",
-            "skills": skills or [{"name": s, "category": cat} for s, cat in [("Python", "Languages"), ("JavaScript", "Languages"), ("React", "Frameworks"), ("Node.js", "Frameworks"), ("Docker", "Tools")]],
+            "skills": skills or [{"name": s, "category": cat} for s, cat in [("Python", "Programming Languages"), ("JavaScript", "Programming Languages"), ("React", "Libraries & Frameworks"), ("Node.js", "Libraries & Frameworks"), ("Docker", "Tools & Platforms")]],
             "experience": [],
-            "education": [],
+            "education": [{"institution": edu_institution, "degree": edu_degree, "field": edu_field, "startDate": edu_start, "endDate": edu_end, "gpa": edu_gpa}] if edu_institution else [],
             "projects": projects[:5],
             "certifications": [],
             "section_order": ["summary", "skills", "projects", "education", "certifications"],
         }
+
+    def _ensure_education(self, resume_data, user_profile=None):
+        education = resume_data.get("education", [])
+        if not education or not education[0].get("institution"):
+            profile = user_profile or {}
+            inst = profile.get("education_institution", "")
+            if inst:
+                resume_data["education"] = [{
+                    "institution": inst,
+                    "degree": profile.get("education_degree", ""),
+                    "field": profile.get("education_field", ""),
+                    "startDate": profile.get("education_start_date", ""),
+                    "endDate": profile.get("education_end_date", ""),
+                    "gpa": profile.get("education_gpa", ""),
+                }]
 
     def _call_llm(self, model, system_msg, user_msg):
         from services.llm_service import get_llm
@@ -194,15 +219,37 @@ class ResumeEngine:
         ]
         return get_llm().generate_response(messages)
 
-    def generate_structured_resume(self, query, username, model, user_profile=None):
+    def generate_structured_resume(self, query, username, model, user_profile=None, requested_projects=None):
         target_domain, target_role = self._detect_domain(query)
         context = self._fetch_context(username, target_domain)
+
+        if requested_projects:
+            filtered = []
+            for line in context.split("\n---\n"):
+                for rp in requested_projects:
+                    if rp.lower() in line.lower():
+                        filtered.append(line)
+                        break
+            if filtered:
+                context = "\n---\n".join(filtered)
+                print(f"[ResumeEngine] Filtered to {len(filtered)} requested projects: {requested_projects}")
 
         profile = user_profile or {}
         email = profile.get("email", "")
         github = profile.get("github", "")
         linkedin = profile.get("linkedin", "")
         leetcode = profile.get("leetcode", "")
+        phone = profile.get("phone", "")
+        edu_institution = profile.get("education_institution", "")
+        edu_degree = profile.get("education_degree", "")
+        edu_field = profile.get("education_field", "")
+        edu_start = profile.get("education_start_date", "")
+        edu_end = profile.get("education_end_date", "")
+        edu_gpa = profile.get("education_gpa", "")
+
+        edu_section = ""
+        if edu_institution:
+            edu_section = f"\nEducation: {edu_degree} in {edu_field} from {edu_institution} ({edu_start} to {edu_end}), GPA: {edu_gpa or 'N/A'}"
 
         system_msg = "You are a professional resume writer. You MUST respond with ONLY a valid JSON object. No explanation, no markdown, no text before or after the JSON."
 
@@ -210,28 +257,44 @@ class ResumeEngine:
 
 User: {username}
 Email: {email or 'not provided'}
+Phone: {phone or 'not provided'}
 GitHub: {github or 'not provided'}
 LinkedIn: {linkedin or 'not provided'}
 LeetCode: {leetcode or 'not provided'}
+{edu_section}
 
-Below is the raw project data extracted from the user's GitHub repositories. For EACH project, you MUST write a 2-sentence description based on the Description, Features, and README fields provided:
+Below is the raw project data extracted from the user's GitHub repositories:
 
 {context}
 
-IMPORTANT: For each project above, use the Description, Features, and README content to write a meaningful 2-sentence description. The first sentence should explain what the project does and its purpose. The second sentence should describe the technical approach and key features implemented.
+IMPORTANT RULES:
+
+1. SKILLS FORMAT - Categorize skills exactly like this:
+   - "Programming Languages": Python, SQL, JavaScript, TypeScript, etc.
+   - "Core Areas": Machine Learning, NLP, Generative AI, RAG, LLM Applications, Computer Vision, etc.
+   - "Libraries & Frameworks": LangChain, FAISS, TensorFlow, Scikit-learn, Flask, React, etc.
+   - "Tools & Platforms": Git, GitHub, VS Code, Google Colab, Firebase, Docker, AWS, Ollama, etc.
+   Each skill object must use these EXACT category names.
+
+2. PROJECTS FORMAT - For each project:
+   - "name": "PROJECT_NAME – Short one-line description" (e.g. "ZORO – AI Driven Task Automation")
+   - "description": "1-2 sentences: what was built and the technical approach"
+   - "technologies": ["Tech1", "Tech2", "Tech3"] (the main technologies used)
+   - "highlights": ["Built X using Y achieving Z", "Implemented A with B reducing C by D%"] (2-3 bullet points with strong action verbs)
+   - "github_url": the repo URL if available
+
+3. If Resume Description or Bullet Points are provided for a project, use them as the primary source.
+
+4. Include ALL projects from the context (or up to 6 best ones if there are many).
+
+5. ALWAYS include email, phone, GitHub in personal section.
+
+6. Write a detailed 3-4 sentence professional summary.
 
 Return this JSON structure exactly:
-{{"personal":{{"name":"{username}","email":"{email}","phone":"","location":"","linkedin":"{linkedin}","github":"{github}","website":"{leetcode}"}},"summary":"3-4 sentence summary for {target_role} highlighting key skills, experience domains, and career objectives","skills":[{{"name":"Skill","category":"Languages"}}],"experience":[{{"company":"Co","position":"Title","startDate":"2024-01","endDate":"2024-06","highlights":["Built X using Y reducing Z by N%"]}}],"education":[{{"institution":"Uni","degree":"BS","field":"CS","startDate":"2022","endDate":"2026","gpa":""}}],"projects":[{{"name":"Proj name from data above","description":"2 sentences: what it does + how it was built, based on the Description/Features/README fields above","technologies":["tech1","tech2"],"highlights":["Architected and built X using Y achieving Z","Implemented A feature with B reducing C by D%","Optimized E resulting in F improvement"],"github_url":""}}],"certifications":[{{"name":"Cert","issuer":"Org"}}],"section_order":["summary","skills","projects","education","certifications"]}}
+{{"personal":{{"name":"{username}","email":"{email}","phone":"{phone}","location":"","linkedin":"{linkedin}","github":"{github}","website":"{leetcode}"}},"summary":"3-4 sentence summary for {target_role}","skills":[{{"name":"Python","category":"Programming Languages"}},{{"name":"Machine Learning","category":"Core Areas"}},{{"name":"LangChain","category":"Libraries & Frameworks"}},{{"name":"Git","category":"Tools & Platforms"}}],"experience":[{{"company":"Co","position":"Title","startDate":"2024-01","endDate":"2024-06","highlights":["Built X using Y reducing Z by N%"]}}],"education":[{{"institution":"{edu_institution or 'Uni'}","degree":"{edu_degree or 'BS'}","field":"{edu_field or 'CS'}","startDate":"{edu_start or '2022'}","endDate":"{edu_end or '2026'}","gpa":"{edu_gpa or ''}"}}],"projects":[{{"name":"PROJECT_NAME – Short Description","description":"1-2 sentences about what was built and how","technologies":["Tech1","Tech2"],"highlights":["Built X using Y achieving Z","Implemented A with B"],"github_url":""}}],"certifications":[{{"name":"Cert","issuer":"Org"}}],"section_order":["summary","skills","projects","education","certifications"]}}
 
-Rules:
-- Use the user's actual email, GitHub, LinkedIn, and LeetCode URLs in the personal section
-- Extract skills from projects and categorize them properly
-- For EACH project listed above, write a description based on its Description, Features, and README fields. Do NOT leave descriptions empty.
-- Each project MUST have 3-4 bullet points starting with strong action verbs (Architected, Implemented, Designed, Developed, Optimized, Deployed, Led)
-- Write a detailed 3-4 sentence summary
-- If no experience, set experience to [] and add more projects with richer descriptions
-- Make the resume detailed enough to fill one full page
-- Return ONLY the JSON."""
+Return ONLY the JSON."""
 
         print(f"[ResumeEngine] Generating structured resume for {target_role} with {model}...")
 
@@ -245,6 +308,7 @@ Rules:
                         if key not in resume_data:
                             resume_data[key] = [] if key not in ("personal", "summary", "section_order") else {} if key == "personal" else ""
                     self._ensure_project_descriptions(resume_data, username)
+                    self._ensure_education(resume_data, user_profile)
                     return resume_data
                 print(f"[ResumeEngine] Attempt {attempt + 1}: invalid JSON, retrying...")
             except Exception as e:
@@ -257,15 +321,22 @@ Rules:
         projects = resume_data.get("projects", [])
         for proj in projects:
             desc = (proj.get("description") or "").strip()
+            name = proj.get("name", "this project")
+            techs = proj.get("technologies", [])
+            tech_str = ", ".join(techs[:3]) if techs else "modern technologies"
+            highlights = proj.get("highlights", [])
+
             if len(desc) < 20:
-                name = proj.get("name", "this project")
-                techs = proj.get("technologies", [])
-                tech_str = ", ".join(techs[:3]) if techs else "modern technologies"
-                highlights = proj.get("highlights", [])
                 if highlights:
                     proj["description"] = f"{highlights[0].rstrip('.')}. Built with {tech_str} to deliver a robust and scalable solution."
                 else:
-                    proj["description"] = f"{name} is a software application built using {tech_str}. Developed to solve real-world problems with a focus on clean architecture and maintainability."
+                    proj["description"] = f"A software project built with {tech_str}. Developed with focus on performance, scalability, and code quality."
+
+            if not highlights or len(highlights) < 2:
+                proj["highlights"] = highlights or [
+                    f"Architected and developed {name.split('–')[0].strip()} using {tech_str}",
+                    "Implemented core features with focus on performance and code quality",
+                ]
 
     def render_latex(self, resume_data, template_name="modern"):
         template_file = f"resume_{template_name}.tex.j2"
@@ -316,13 +387,13 @@ Rules:
             "sections": sections,
         }
 
-    def generate_resume(self, query, username, model=None, template="modern", user_profile=None):
+    def generate_resume(self, query, username, model=None, template="modern", user_profile=None, requested_projects=None):
         from app.core.config import settings
         model = model or settings.DEFAULT_MODEL
         target_domain, target_role = self._detect_domain(query)
         print(f"[ResumeEngine] target_domain={target_domain}, target_role={target_role}")
 
-        resume_data = self.generate_structured_resume(query, username, model, user_profile=user_profile)
+        resume_data = self.generate_structured_resume(query, username, model, user_profile=user_profile, requested_projects=requested_projects)
 
         resume_data["personal"]["name"] = username
 

@@ -5,7 +5,8 @@ import ReactMarkdown from 'react-markdown';
 import {
   Search, Filter, GitBranch, Code2, Layers, Wrench,
   BarChart3, Target, Star, Globe, ChevronRight, BookOpen, RefreshCw,
-  Settings, Github,
+  Settings, Github, Brain, Rocket, Shield, Database, GitCommit,
+  FileText, Building2, Sparkles,
 } from 'lucide-react';
 import { fetchUserRepos } from '../api/github';
 import Card from '../components/ui/Card';
@@ -179,6 +180,8 @@ export default function GitHubAnalysis() {
       techs,
       skills,
       frameworks,
+      atsKeywords: repo.ats_keywords || [],
+      aiCapabilities: repo.ai_capabilities || [],
       skillChart: Object.entries(skillCounts)
         .map(([name, count]) => ({ name, count }))
         .sort((a, b) => b.count - a.count)
@@ -434,6 +437,86 @@ export default function GitHubAnalysis() {
                     </div>
                   )}
 
+                  {selectedData.resume_description && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                        <FileText className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        Resume Description
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 p-3 rounded-xl bg-gray-50 dark:bg-slate-900">
+                        {selectedData.resume_description}
+                      </p>
+                    </div>
+                  )}
+
+                  {selectedData.atsKeywords && selectedData.atsKeywords.length > 0 && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                        <Target className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        ATS Keywords
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedData.atsKeywords.map(kw => (
+                          <Badge key={kw} color="green" size="sm">{kw}</Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedData.architecture_type && selectedData.architecture_type !== 'Software Project' && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                        <Building2 className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        Architecture
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <Badge color="blue" size="md">{selectedData.architecture_type}</Badge>
+                        {selectedData.architecture_pattern && selectedData.architecture_pattern !== selectedData.architecture_type && (
+                          <Badge color="slate" size="sm">{selectedData.architecture_pattern}</Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedData.is_ai_project && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                        <Brain className="w-4 h-4 text-emerald-500" />
+                        AI/ML Capabilities
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedData.aiCapabilities.map(cap => (
+                          <Badge key={cap} color="emerald" size="sm">{cap}</Badge>
+                        ))}
+                        {selectedData.aiCapabilities.length === 0 && (
+                          <span className="text-sm text-gray-400">AI project detected</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedData.deployment_readiness && selectedData.deployment_readiness !== 'none' && (
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                        <Rocket className="w-4 h-4 text-orange-500" />
+                        Deployment Readiness
+                      </h3>
+                      <div className="flex items-center gap-3">
+                        <Badge
+                          color={selectedData.deployment_readiness === 'high' ? 'green' : selectedData.deployment_readiness === 'medium' ? 'amber' : 'gray'}
+                          size="md"
+                        >
+                          {selectedData.deployment_readiness.charAt(0).toUpperCase() + selectedData.deployment_readiness.slice(1)}
+                        </Badge>
+                        {selectedData.has_testing && (
+                          <Badge color="green" size="sm">
+                            <Shield className="w-3 h-3" /> Has Tests
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                       <BarChart3 className="w-4 h-4 text-gray-900 dark:text-gray-400" />
@@ -472,6 +555,23 @@ export default function GitHubAnalysis() {
                       <p className="text-xs text-gray-500 dark:text-gray-400">Stars</p>
                     </div>
                   </div>
+
+                  {selectedData.resume_strength > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-slate-900 text-center">
+                        <p className="text-lg font-bold text-amber-500">
+                          {selectedData.resume_strength}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Resume Score</p>
+                      </div>
+                      <div className="p-3 rounded-xl bg-gray-50 dark:bg-slate-900 text-center">
+                        <p className="text-lg font-bold text-blue-500">
+                          {selectedData.portfolio_strength || 0}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">Portfolio Score</p>
+                      </div>
+                    </div>
+                  )}
                 </Card>
               </motion.div>
             ) : (

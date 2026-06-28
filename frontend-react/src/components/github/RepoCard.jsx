@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Star, Code2 } from 'lucide-react';
+import { Star, Code2, Brain, Shield, Rocket, BarChart3 } from 'lucide-react';
 import Badge from '../ui/Badge';
 
 export default function RepoCard({ repo, isSelected, onClick, className = '' }) {
@@ -10,6 +10,10 @@ export default function RepoCard({ repo, isSelected, onClick, className = '' }) 
     : 0;
 
   const description = repo.description || 'No description available';
+  const isAi = repo.is_ai_project;
+  const hasTesting = repo.has_testing;
+  const deployReadiness = repo.deployment_readiness;
+  const resumeStrength = repo.resume_strength || 0;
 
   return (
     <motion.button
@@ -47,6 +51,33 @@ export default function RepoCard({ repo, isSelected, onClick, className = '' }) 
         )}
         {repo.domain && (
           <Badge color="purple" size="sm">{repo.domain}</Badge>
+        )}
+        {repo.architecture_type && repo.architecture_type !== 'Software Project' && (
+          <Badge color="blue" size="sm">{repo.architecture_type}</Badge>
+        )}
+        {isAi && (
+          <Badge color="emerald" size="sm">
+            <Brain className="w-3 h-3" />
+            AI
+          </Badge>
+        )}
+        {hasTesting && (
+          <Badge color="green" size="sm">
+            <Shield className="w-3 h-3" />
+            Tested
+          </Badge>
+        )}
+        {deployReadiness && deployReadiness !== 'none' && (
+          <Badge color="orange" size="sm">
+            <Rocket className="w-3 h-3" />
+            {deployReadiness}
+          </Badge>
+        )}
+        {resumeStrength >= 7 && (
+          <Badge color="amber" size="sm">
+            <BarChart3 className="w-3 h-3" />
+            Strong
+          </Badge>
         )}
         {techCount > 0 && (
           <Badge color="gray" size="sm">{techCount} tech</Badge>

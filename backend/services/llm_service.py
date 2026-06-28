@@ -14,17 +14,13 @@ class GeminiProvider:
 
     def _get_client(self):
         if self._client is None:
-            import google.generativeai as genai
-            genai.configure(api_key=self.api_key)
-            self._client = genai.GenerativeModel(self.model)
+            from google import genai
+            self._client = genai.Client(api_key=self.api_key)
         return self._client
 
     def generate(self, messages: list[dict], model: str = None) -> str:
         client = self._get_client()
         model_name = model or self.model
-        if model_name != self.model:
-            import google.generativeai as genai
-            client = genai.GenerativeModel(model_name)
 
         contents = []
         system_instruction = None
@@ -34,16 +30,21 @@ class GeminiProvider:
             if role == "system":
                 system_instruction = content
             else:
-                contents.append({"role": "user" if role == "user" else "model", "parts": [content]})
+                contents.append(content)
 
         if not contents:
             raise LLMError("No user messages provided")
 
-        if system_instruction and contents:
-            contents[0]["parts"][0] = f"[System: {system_instruction}]\n\n{contents[0]['parts'][0]}"
+        config = None
+        if system_instruction:
+            from google.genai import types
+            config = types.GenerateContentConfig(system_instruction=system_instruction)
 
-        gen_config = {"temperature": 0.3}
-        response = client.generate_content(contents, generation_config=gen_config)
+        response = client.models.generate_content(
+            model=model_name,
+            contents=contents,
+            config=config,
+        )
 
         if not response.text:
             raise LLMError("Gemini returned empty response")
@@ -52,9 +53,6 @@ class GeminiProvider:
     def generate_stream(self, messages: list[dict], model: str = None) -> Iterator[str]:
         client = self._get_client()
         model_name = model or self.model
-        if model_name != self.model:
-            import google.generativeai as genai
-            client = genai.GenerativeModel(model_name)
 
         contents = []
         system_instruction = None
@@ -64,20 +62,24 @@ class GeminiProvider:
             if role == "system":
                 system_instruction = content
             else:
-                contents.append({"role": "user" if role == "user" else "model", "parts": [content]})
+                contents.append(content)
 
         if not contents:
             raise LLMError("No user messages provided")
 
-        if system_instruction and contents:
-            contents[0]["parts"][0] = f"[System: {system_instruction}]\n\n{contents[0]['parts'][0]}"
+        config = None
+        if system_instruction:
+            from google.genai import types
+            config = types.GenerateContentConfig(system_instruction=system_instruction)
 
-        gen_config = {"temperature": 0.3}
-        response = client.generate_content(contents, generation_config=gen_config, stream=True)
+        response = client.models.generate_content(
+            model=model_name,
+            contents=contents,
+            config=config,
+        )
 
-        for chunk in response:
-            if chunk.text:
-                yield chunk.text
+        if response.text:
+            yield response.text
 
 
 class OllamaProvider:

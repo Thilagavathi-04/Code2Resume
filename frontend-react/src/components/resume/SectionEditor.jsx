@@ -19,9 +19,12 @@ export default function SectionEditor({
 
   return (
     <div className={`border border-gray-100 dark:border-gray-700 rounded-xl overflow-hidden ${className}`}>
-      <button
+      <div
+        role="button"
+        tabIndex={0}
         onClick={toggle}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors"
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } }}
+        className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:hover:bg-slate-800 transition-colors cursor-pointer select-none"
       >
         <div className="flex items-center gap-2">
           {Icon && <Icon className="w-4 h-4 text-gray-900 dark:text-gray-400" />}
@@ -43,7 +46,7 @@ export default function SectionEditor({
             <ChevronDown className="w-4 h-4 text-gray-400" />
           </motion.div>
         </div>
-      </button>
+      </div>
       <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div

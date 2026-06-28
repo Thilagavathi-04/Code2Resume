@@ -30,10 +30,7 @@
 
 \begin{center}
     {\Huge \textbf{\textcolor{accent}{<< personal.name | escape_latex >>}}} \\[2pt]
-    << personal.location | escape_latex >><< " \quad | \quad " if personal.location >><< personal.email | escape_latex >><< " \quad | \quad " if personal.email >><< personal.phone | escape_latex >>
-<% if personal.github %> \quad | \quad \href{<< personal.github >>}{\faGithub\ GitHub}<% endif %>
-<% if personal.linkedin %> \quad | \quad \href{<< personal.linkedin >>}{\faLinkedin\ LinkedIn}<% endif %>
-<% if personal.website %> \quad | \quad \href{<< personal.website >>}{\faGlobe\ Portfolio}<% endif %>
+<% if personal.location %> << personal.location | escape_latex >> \quad | \quad <% endif %><% if personal.phone %> \href{tel:<< personal.phone >>}{<< personal.phone | escape_latex >>} \quad | \quad <% endif %><% if personal.email %> \href{mailto:<< personal.email >>}{<< personal.email | escape_latex >>} \quad | \quad <% endif %><% if personal.github %> \href{<< personal.github >>}{\faGithub\ GitHub} \quad | \quad <% endif %><% if personal.linkedin %> \href{<< personal.linkedin >>}{\faLinkedin\ LinkedIn} \quad | \quad <% endif %><% if personal.website %> \href{<< personal.website >>}{\faCode\ LeetCode}<% endif %>
 \end{center}
 
 <% if summary %>

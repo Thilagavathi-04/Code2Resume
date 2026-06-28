@@ -113,6 +113,12 @@ export default function Settings() {
     email: '',
     phone: '',
     bio: '',
+    education_institution: '',
+    education_degree: '',
+    education_field: '',
+    education_start_date: '',
+    education_end_date: '',
+    education_gpa: '',
   });
 
   const [github, setGithub] = useState({
@@ -159,6 +165,12 @@ export default function Settings() {
         email: userData.gmail || '',
         phone: userData.mobile_number || '',
         bio: '',
+        education_institution: userData.education_institution || '',
+        education_degree: userData.education_degree || '',
+        education_field: userData.education_field || '',
+        education_start_date: userData.education_start_date || '',
+        education_end_date: userData.education_end_date || '',
+        education_gpa: userData.education_gpa || '',
       });
       setGithub((prev) => ({
         ...prev,
@@ -181,7 +193,16 @@ export default function Settings() {
     setMessage({ type: '', text: '' });
     try {
       if (tab === 'profile') {
-        const updateData = { gmail: profile.email, mobile_number: profile.phone };
+        const updateData = {
+          gmail: profile.email,
+          mobile_number: profile.phone,
+          education_institution: profile.education_institution,
+          education_degree: profile.education_degree,
+          education_field: profile.education_field,
+          education_start_date: profile.education_start_date,
+          education_end_date: profile.education_end_date,
+          education_gpa: profile.education_gpa,
+        };
         const updatedUser = await updateUser(updateData);
         setUser(updatedUser);
       } else if (tab === 'github') {
@@ -296,6 +317,48 @@ export default function Settings() {
                 onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent transition-all resize-none"
               />
+            </div>
+
+            <div className="pt-4 border-t border-gray-100 dark:border-gray-700">
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Education</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InputField
+                  label="School / College"
+                  placeholder="e.g. State University"
+                  value={profile.education_institution}
+                  onChange={(e) => setProfile({ ...profile, education_institution: e.target.value })}
+                />
+                <InputField
+                  label="Degree"
+                  placeholder="e.g. B.S."
+                  value={profile.education_degree}
+                  onChange={(e) => setProfile({ ...profile, education_degree: e.target.value })}
+                />
+                <InputField
+                  label="Field of Study"
+                  placeholder="e.g. Computer Science"
+                  value={profile.education_field}
+                  onChange={(e) => setProfile({ ...profile, education_field: e.target.value })}
+                />
+                <InputField
+                  label="GPA"
+                  placeholder="e.g. 3.8"
+                  value={profile.education_gpa}
+                  onChange={(e) => setProfile({ ...profile, education_gpa: e.target.value })}
+                />
+                <InputField
+                  label="Start Date"
+                  placeholder="e.g. 2022-09"
+                  value={profile.education_start_date}
+                  onChange={(e) => setProfile({ ...profile, education_start_date: e.target.value })}
+                />
+                <InputField
+                  label="End Date"
+                  placeholder="e.g. 2026-05"
+                  value={profile.education_end_date}
+                  onChange={(e) => setProfile({ ...profile, education_end_date: e.target.value })}
+                />
+              </div>
             </div>
 
             <div className="flex justify-end">

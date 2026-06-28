@@ -15,6 +15,7 @@ import ResumeTemplates from './pages/ResumeTemplates';
 import InterviewPrep from './pages/InterviewPrep';
 import Analytics from './pages/Analytics';
 import JobDescriptions from './pages/JobDescriptions';
+import AIChat from './pages/AIChat';
 
 function PrivateRoute({ children }) {
   const token = useAuthStore(state => state.token);
@@ -92,6 +93,12 @@ function AnimatedRoutes() {
       <Route path="/resumes" element={
         <PrivateRoute>
           <AppLayout><Resumes /></AppLayout>
+        </PrivateRoute>
+      } />
+
+      <Route path="/chat" element={
+        <PrivateRoute>
+          <AppLayout><AIChat /></AppLayout>
         </PrivateRoute>
       } />
 
