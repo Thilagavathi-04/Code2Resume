@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Save, Download, Eye, Edit3 } from 'lucide-react';
+import { Save, Download, Eye, Edit3, FileJson, FileText, X } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ResumeForm from '../components/resume/ResumeForm';
 import ResumePreview from '../components/resume/ResumePreview';
@@ -8,6 +8,7 @@ import FormattingToolbar from '../components/resume/FormattingToolbar';
 import v2 from '../api/v2';
 import { useResumeStore } from '../store/resumeStore';
 import { useToastStore } from '../components/ui/Toast';
+import { exportResumePDF } from '../api/github';
 
 const STORAGE_KEY = 'resume-builder-data';
 
@@ -114,6 +115,8 @@ export default function ResumeBuilder() {
   const [mobileTab, setMobileTab] = useState('form');
   const [saveStatus, setSaveStatus] = useState('saved');
   const [loadingResume, setLoadingResume] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const saveTimerRef = useRef(null);
 
   const loadResume = useCallback(async (id) => {
@@ -163,14 +166,82 @@ export default function ResumeBuilder() {
   const handleSave = async () => {
     try {
       const payload = mapFormDataToPayload(data, resumeTitle, selectedTemplate, formatting, sectionOrder);
-      if (resumeId) {
-        await v2.resumes.update(resumeId, payload);
+      let id = resumeId;
+      if (id) {
+        await v2.resumes.update(id, payload);
+        await Promise.all([
+          v2.resumes.clearExperiences(id),
+          v2.resumes.clearEducations(id),
+          v2.resumes.clearSkills(id),
+          v2.resumes.clearCertifications(id),
+          v2.resumes.clearProjects(id),
+        ]);
       } else {
         const res = await v2.resumes.create(payload);
         const created = res.data || res;
-        setResumeId(created.id);
-        navigate(`/builder?resumeId=${created.id}`, { replace: true });
+        id = created.id;
+        setResumeId(id);
+        navigate(`/builder?resumeId=${id}`, { replace: true });
       }
+
+      const addAll = [];
+      for (const exp of (data.experience || [])) {
+        if (exp.company || exp.position) {
+          addAll.push(v2.resumes.addExperience(id, {
+            company: exp.company || '',
+            position: exp.position || '',
+            start_date: exp.startDate || '',
+            end_date: exp.endDate || '',
+            description: exp.description || '',
+            highlights: exp.highlights || [],
+          }));
+        }
+      }
+      for (const edu of (data.education || [])) {
+        if (edu.institution) {
+          addAll.push(v2.resumes.addEducation(id, {
+            institution: edu.institution,
+            degree: edu.degree || '',
+            field_of_study: edu.field || '',
+            start_date: edu.startDate || '',
+            end_date: edu.endDate || '',
+            gpa: edu.gpa || '',
+          }));
+        }
+      }
+      for (const skill of (data.skills || [])) {
+        if (skill.name) {
+          addAll.push(v2.resumes.addSkill(id, {
+            name: skill.name,
+            proficiency: skill.proficiency || 'intermediate',
+            category: skill.category || '',
+          }));
+        }
+      }
+      for (const cert of (data.certifications || [])) {
+        if (cert.name) {
+          addAll.push(v2.resumes.addCertification(id, {
+            name: cert.name,
+            issuer: cert.issuer || '',
+          }));
+        }
+      }
+      for (const proj of (data.projects || [])) {
+        if (proj.name) {
+          const techs = typeof proj.technologies === 'string'
+            ? proj.technologies.split(',').map(t => t.trim()).filter(Boolean)
+            : (proj.technologies || []);
+          addAll.push(v2.resumes.addProject(id, {
+            name: proj.name,
+            description: proj.description || '',
+            technologies: techs,
+            highlights: proj.highlights || [],
+            github_url: proj.link || '',
+          }));
+        }
+      }
+      await Promise.all(addAll);
+
       addToast({ type: 'success', message: 'Resume saved' });
       setSaveStatus('saved');
     } catch {
@@ -179,6 +250,10 @@ export default function ResumeBuilder() {
   };
 
   const handleExport = () => {
+    setShowExportModal(true);
+  };
+
+  const handleExportJSON = () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -186,6 +261,27 @@ export default function ResumeBuilder() {
     a.download = 'resume-data.json';
     a.click();
     URL.revokeObjectURL(url);
+    setShowExportModal(false);
+    addToast({ type: 'success', message: 'JSON exported!' });
+  };
+
+  const handleExportPDF = async () => {
+    setExporting(true);
+    try {
+      const blob = await exportResumePDF(data);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `resume_${resumeTitle.replace(/\s+/g, '_')}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setShowExportModal(false);
+      addToast({ type: 'success', message: 'PDF exported!' });
+    } catch (err) {
+      addToast({ type: 'error', message: 'Failed to export PDF' });
+    } finally {
+      setExporting(false);
+    }
   };
 
   if (loadingResume) {
@@ -281,6 +377,47 @@ export default function ResumeBuilder() {
           <ResumePreview data={data} template={selectedTemplate} formatting={formatting} sectionOrder={sectionOrder} />
         </div>
       </div>
+
+      {showExportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => !exporting && setShowExportModal(false)} />
+          <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 p-6 w-full max-w-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Export Resume</h3>
+              <button onClick={() => !exporting && setShowExportModal(false)} className="p-1 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                <X size={18} />
+              </button>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">Choose export format:</p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleExportJSON}
+                disabled={exporting}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 transition-all disabled:opacity-50"
+              >
+                <FileJson className="w-8 h-8 text-gray-600 dark:text-gray-400" />
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">JSON</span>
+                <span className="text-xs text-gray-400">Raw data</span>
+              </button>
+              <button
+                onClick={handleExportPDF}
+                disabled={exporting}
+                className="flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-gray-900 dark:border-gray-400 bg-gray-900 dark:bg-gray-400 text-white transition-all disabled:opacity-50"
+              >
+                <FileText className="w-8 h-8" />
+                <span className="text-sm font-medium">PDF</span>
+                <span className="text-xs opacity-70">Print ready</span>
+              </button>
+            </div>
+            {exporting && (
+              <div className="flex items-center justify-center gap-2 mt-4 text-sm text-gray-500">
+                <div className="animate-spin w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full" />
+                Generating PDF...
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

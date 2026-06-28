@@ -134,6 +134,13 @@ async def analyze_repo(
                     status="completed", progress="Done!", result=result
                 )
                 try:
+                    from services.knowledge_graph import KnowledgeGraph
+                    kg = KnowledgeGraph()
+                    kg.add_repo(username, result)
+                    print(f"[ANALYZE] Knowledge graph updated: {result.get('name', '?')}")
+                except Exception as kg_err:
+                    print(f"[ANALYZE] Knowledge graph failed: {kg_err}")
+                try:
                     rag = RAGService()
                     rag.add_repo_data(result, username)
                     print(f"[ANALYZE] RAG indexed: {result.get('name', '?')}")
@@ -232,6 +239,13 @@ async def analyze_all_repos(
 
                         results.append(result)
 
+                        try:
+                            from services.knowledge_graph import KnowledgeGraph
+                            kg = KnowledgeGraph()
+                            kg.add_repo(username, result)
+                            print(f"[SYNC] [{i+1}/{len(repos)}] Knowledge graph updated: {repo_name}")
+                        except Exception as kg_err:
+                            print(f"[SYNC] [{i+1}/{len(repos)}] Knowledge graph FAILED for {repo_name}: {kg_err}")
                         try:
                             rag.add_repo_data(result, username)
                             print(f"[SYNC] [{i+1}/{len(repos)}] RAG indexed: {repo_name}")
@@ -393,6 +407,13 @@ async def generate_resume_file(
         "github": user.github_url if user else "",
         "linkedin": user.linkedin_id if user else "",
         "leetcode": user.leetcode_id if user else "",
+        "phone": user.mobile_number if user else "",
+        "education_institution": user.education_institution if user else "",
+        "education_degree": user.education_degree if user else "",
+        "education_field": user.education_field if user else "",
+        "education_start_date": user.education_start_date if user else "",
+        "education_end_date": user.education_end_date if user else "",
+        "education_gpa": user.education_gpa if user else "",
     }
     try:
         from services.agent_service import AgentService
@@ -514,6 +535,275 @@ async def download_resume_v1(
             )
 
     raise HTTPException(status_code=404, detail="File not found")
+
+
+@router.post("/rebuild-knowledge-graph")
+async def rebuild_knowledge_graph(
+    current_user_id: uuid.UUID = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    user = await user_service.get_user_by_id(db, current_user_id)
+    username = user.username if user else "unknown"
+
+    try:
+        from services.rag_service import RAGService
+        from services.knowledge_graph import KnowledgeGraph
+
+        rag = RAGService()
+        repos = rag.get_user_repos(username)
+        if not repos:
+            raise HTTPException(status_code=400, detail="No indexed repos found. Analyze repos first.")
+
+        print(f"\n[KG-REBUILD] Rebuilding knowledge graph for {username} from {len(repos)} repos")
+        kg = KnowledgeGraph()
+        count = 0
+        for repo in repos:
+            repo_url = repo.get("url") or repo.get("html_url") or ""
+            repo_name = repo.get("name", "")
+            if not repo_name:
+                continue
+
+            repo_data = {
+                "name": repo_name,
+                "description": repo.get("description", ""),
+                "tech_stack": repo.get("tech_stack", {}),
+                "classification": {"primary": repo.get("category", repo.get("domain", "Other"))},
+                "architecture": {"type": repo.get("architecture_type", ""), "pattern": repo.get("architecture_pattern", "")},
+                "deployment": {"detected_technologies": [repo.get("deployment_readiness", "")] if repo.get("deployment_readiness") and repo.get("deployment_readiness") != "none" else []},
+                "ai_ml": {"is_ai_project": repo.get("is_ai_project", False), "capabilities": repo.get("ai_capabilities", [])},
+                "quality_metrics": {"resume_strength_score": repo.get("resume_strength", 0), "portfolio_strength_score": repo.get("portfolio_strength", 0)},
+            }
+            print(f"[KG-REBUILD]   [{count+1}] {repo_name}: cat={repo_data['classification']['primary']}, techs={list(repo_data['tech_stack'].keys()) if isinstance(repo_data['tech_stack'], dict) else repo_data['tech_stack']}")
+            kg.add_repo(username, repo_data)
+            count += 1
+
+        stats = kg.get_graph_stats(username)
+        print(f"[KG-REBUILD] Done: {count} repos, nodes={stats['total_nodes']}, edges={stats['total_edges']}")
+        print(f"[KG-REBUILD] Node types: {stats['node_types']}")
+        print(f"[KG-REBUILD] Edge types: {stats['edge_types']}")
+        return {
+            "success": True,
+            "message": f"Knowledge graph rebuilt from {count} repos",
+            "stats": stats,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to rebuild knowledge graph: {str(e)}")
+
+
+class ResumeExportRequest(BaseModel):
+    resume_data: dict
+    format: str = "pdf"
+
+
+@router.post("/export-resume")
+async def export_resume(
+    request: ResumeExportRequest,
+    current_user_id: uuid.UUID = Depends(get_current_user),
+):
+    import fitz
+
+    resume = request.resume_data
+    personal = resume.get("personal", {})
+    summary = resume.get("summary", "")
+    skills = resume.get("skills", [])
+    experience = resume.get("experience", [])
+    education = resume.get("education", [])
+    projects = resume.get("projects", [])
+    certifications = resume.get("certifications", [])
+
+    doc = fitz.open()
+    page_holder = [doc.new_page(width=595, height=842)]
+    margin_left = 50
+    margin_right = 50
+    margin_top = 40
+    y_holder = [margin_top]
+    page_width = 595 - margin_left - margin_right
+    blue = (0.2, 0.45, 0.91)
+
+    def new_page():
+        page_holder[0] = doc.new_page(width=595, height=842)
+        y_holder[0] = margin_top
+
+    def draw_text(text, x=None, fontname="helv", fontsize=10, color=(0, 0, 0)):
+        if x is None:
+            x = margin_left
+        if not text:
+            return
+        text = str(text)
+        for line_text in text.split("\n"):
+            line_text = line_text.strip()
+            if not line_text:
+                y_holder[0] += fontsize + 2
+                continue
+            if y_holder[0] > 800:
+                new_page()
+            tw = fitz.get_text_length(line_text, fontname=fontname, fontsize=fontsize)
+            if tw > page_width:
+                words = line_text.split()
+                cur = ""
+                for w in words:
+                    test = f"{cur} {w}".strip()
+                    if fitz.get_text_length(test, fontname=fontname, fontsize=fontsize) > page_width:
+                        if cur:
+                            page_holder[0].insert_text((margin_left, y_holder[0]), cur, fontname=fontname, fontsize=fontsize, color=color)
+                            y_holder[0] += fontsize + 3
+                        cur = w
+                    else:
+                        cur = test
+                if cur:
+                    page_holder[0].insert_text((margin_left, y_holder[0]), cur, fontname=fontname, fontsize=fontsize, color=color)
+                    y_holder[0] += fontsize + 3
+            else:
+                page_holder[0].insert_text((x, y_holder[0]), line_text, fontname=fontname, fontsize=fontsize, color=color)
+                y_holder[0] += fontsize + 3
+
+    def draw_section_heading(text):
+        y_holder[0] += 8
+        if y_holder[0] > 800:
+            new_page()
+        page_holder[0].insert_text((margin_left, y_holder[0]), text.upper(), fontname="helv", fontsize=11, color=blue)
+        y_holder[0] += 3
+        page_holder[0].draw_line((margin_left, y_holder[0]), (595 - margin_right, y_holder[0]), color=blue, width=0.5)
+        y_holder[0] += 8
+
+    def draw_bullet(text, indent=10):
+        if not text:
+            return
+        text = str(text)
+        if y_holder[0] > 800:
+            new_page()
+        bullet_x = margin_left + indent
+        page_holder[0].insert_text((bullet_x, y_holder[0]), "•", fontname="helv", fontsize=9, color=(0.3, 0.3, 0.3))
+        words = text.split()
+        cur = ""
+        line_x = bullet_x + 8
+        for w in words:
+            test = f"{cur} {w}".strip()
+            if fitz.get_text_length(test, fontname="helv", fontsize=9) > page_width - indent - 8:
+                if cur:
+                    page_holder[0].insert_text((line_x, y_holder[0]), cur, fontname="helv", fontsize=9)
+                    y_holder[0] += 12
+                    if y_holder[0] > 800:
+                        new_page()
+                cur = w
+            else:
+                cur = test
+        if cur:
+            page_holder[0].insert_text((line_x, y_holder[0]), cur, fontname="helv", fontsize=9)
+            y_holder[0] += 12
+
+    name = personal.get("name", "")
+    if name:
+        page_holder[0].insert_text((margin_left, y_holder[0] + 16), name, fontname="helv", fontsize=18, color=blue)
+        y_holder[0] += 30
+
+    contact_parts = []
+    for field in ["email", "phone", "location", "linkedin", "github", "website"]:
+        val = personal.get(field, "")
+        if val:
+            contact_parts.append(str(val))
+    if contact_parts:
+        contact_line = " | ".join(contact_parts)
+        page_holder[0].insert_text((margin_left, y_holder[0]), contact_line, fontname="helv", fontsize=8, color=(0.4, 0.4, 0.4))
+        y_holder[0] += 14
+
+    if summary:
+        draw_section_heading("Summary")
+        draw_text(summary)
+
+    if skills:
+        draw_section_heading("Technical Skills")
+        categories = {}
+        for s in skills:
+            cat = s.get("category", "Other") if isinstance(s, dict) else "Other"
+            name_val = s.get("name", s) if isinstance(s, dict) else s
+            categories.setdefault(cat, []).append(name_val)
+        for cat, items in categories.items():
+            draw_text(f"{cat}: {', '.join(str(i) for i in items)}", fontsize=9)
+            y_holder[0] += 2
+
+    if experience:
+        draw_section_heading("Experience")
+        for exp in experience:
+            pos = str(exp.get("position", ""))
+            company = str(exp.get("company", ""))
+            start = str(exp.get("startDate", exp.get("start_date", "")))
+            end = str(exp.get("endDate", exp.get("end_date", "")))
+            if y_holder[0] > 800:
+                new_page()
+            page_holder[0].insert_text((margin_left, y_holder[0]), pos, fontname="helv", fontsize=10)
+            date_str = f"{start} – {end}"
+            page_holder[0].insert_text((595 - margin_right - fitz.get_text_length(date_str, fontname="helv", fontsize=9), y_holder[0]),
+                             date_str, fontname="helv", fontsize=9, color=(0.4, 0.4, 0.4))
+            y_holder[0] += 12
+            page_holder[0].insert_text((margin_left, y_holder[0]), company, fontname="hebo", fontsize=9, color=(0.3, 0.3, 0.3))
+            y_holder[0] += 12
+            for h in (exp.get("highlights", [])):
+                draw_bullet(h)
+            y_holder[0] += 4
+
+    if projects:
+        draw_section_heading("Projects")
+        for proj in projects:
+            pname = str(proj.get("name", ""))
+            techs = proj.get("technologies", [])
+            if isinstance(techs, list):
+                techs = ", ".join(str(t) for t in techs)
+            if y_holder[0] > 800:
+                new_page()
+            page_holder[0].insert_text((margin_left, y_holder[0]), pname, fontname="helv", fontsize=10)
+            if techs:
+                page_holder[0].insert_text((595 - margin_right - fitz.get_text_length(str(techs), fontname="helv", fontsize=8), y_holder[0]),
+                                 str(techs), fontname="helv", fontsize=8, color=(0.4, 0.4, 0.4))
+            y_holder[0] += 12
+            desc = proj.get("description", "")
+            if desc:
+                draw_text(desc, fontsize=9)
+            for h in (proj.get("highlights", [])):
+                draw_bullet(h)
+            y_holder[0] += 4
+
+    if education:
+        draw_section_heading("Education")
+        for edu in education:
+            inst = str(edu.get("institution", ""))
+            degree = str(edu.get("degree", ""))
+            field = str(edu.get("field", edu.get("field_of_study", "")))
+            start = str(edu.get("startDate", edu.get("start_date", "")))
+            end = str(edu.get("endDate", edu.get("end_date", "")))
+            gpa = str(edu.get("gpa", ""))
+            if y_holder[0] > 800:
+                new_page()
+            page_holder[0].insert_text((margin_left, y_holder[0]), inst, fontname="helv", fontsize=10)
+            date_str = f"{start} – {end}" if start or end else ""
+            if date_str:
+                page_holder[0].insert_text((595 - margin_right - fitz.get_text_length(date_str, fontname="helv", fontsize=9), y_holder[0]),
+                                 date_str, fontname="helv", fontsize=9, color=(0.4, 0.4, 0.4))
+            y_holder[0] += 12
+            degree_line = degree + (f" in {field}" if field else "")
+            if gpa:
+                degree_line += f" | GPA: {gpa}"
+            page_holder[0].insert_text((margin_left, y_holder[0]), degree_line, fontname="helv", fontsize=9, color=(0.3, 0.3, 0.3))
+            y_holder[0] += 14
+
+    if certifications:
+        draw_section_heading("Certifications")
+        for cert in certifications:
+            cname = str(cert.get("name", ""))
+            issuer = str(cert.get("issuer", ""))
+            draw_bullet(f"{cname}" + (f" — {issuer}" if issuer else ""))
+
+    pdf_bytes = doc.tobytes()
+    doc.close()
+
+    from fastapi.responses import Response
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=resume_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"},
+    )
 
 
 @router.delete("/delete-resume/{filename}")

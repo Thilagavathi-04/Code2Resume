@@ -485,6 +485,66 @@ async def add_project(
     return await resume_service.add_project(db, resume_id, data)
 
 
+@router.delete("/{resume_id}/experiences", status_code=status.HTTP_204_NO_CONTENT)
+async def clear_experiences(
+    resume_id: uuid.UUID,
+    current_user_id: uuid.UUID = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    resume = await resume_service.get_resume(db, resume_id, current_user_id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    await resume_service.clear_experiences(db, resume_id)
+
+
+@router.delete("/{resume_id}/educations", status_code=status.HTTP_204_NO_CONTENT)
+async def clear_educations(
+    resume_id: uuid.UUID,
+    current_user_id: uuid.UUID = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    resume = await resume_service.get_resume(db, resume_id, current_user_id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    await resume_service.clear_educations(db, resume_id)
+
+
+@router.delete("/{resume_id}/skills", status_code=status.HTTP_204_NO_CONTENT)
+async def clear_skills(
+    resume_id: uuid.UUID,
+    current_user_id: uuid.UUID = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    resume = await resume_service.get_resume(db, resume_id, current_user_id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    await resume_service.clear_skills(db, resume_id)
+
+
+@router.delete("/{resume_id}/certifications", status_code=status.HTTP_204_NO_CONTENT)
+async def clear_certifications(
+    resume_id: uuid.UUID,
+    current_user_id: uuid.UUID = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    resume = await resume_service.get_resume(db, resume_id, current_user_id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    await resume_service.clear_certifications(db, resume_id)
+
+
+@router.delete("/{resume_id}/projects", status_code=status.HTTP_204_NO_CONTENT)
+async def clear_projects(
+    resume_id: uuid.UUID,
+    current_user_id: uuid.UUID = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    resume = await resume_service.get_resume(db, resume_id, current_user_id)
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+    await resume_service.clear_projects(db, resume_id)
+
+
 @router.get("/{resume_id}/export")
 async def export_resume(
     resume_id: uuid.UUID,

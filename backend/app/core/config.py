@@ -34,6 +34,18 @@ class Settings(BaseSettings):
     OPENAI_API_KEY: Optional[str] = None
     OPENAI_MODEL: str = "gpt-3.5-turbo"
 
+    RETRIEVAL_BM25_WEIGHT: float = 0.4
+    RETRIEVAL_EMBEDDING_WEIGHT: float = 0.4
+    RETRIEVAL_METADATA_WEIGHT: float = 0.1
+    RETRIEVAL_QUALITY_WEIGHT: float = 0.1
+    RETRIEVAL_SIMILARITY_THRESHOLD: float = 0.72
+    RETRIEVAL_TOP_N: int = 20
+    RETRIEVAL_TOP_K: int = 5
+    RERANKER_MODEL: str = "cross-encoder/ms-marco-MiniLM-L-6-v2"
+    KNOWLEDGE_GRAPH_PATH: str = "data/knowledge_graphs"
+    MAX_CONTEXT_TOKENS: int = 4000
+    TOKENIZER_MODEL: str = "cl100k_base"
+
     CORS_ORIGINS: list[str] = [
         "http://localhost:5173",
         "http://localhost:3000",

@@ -86,3 +86,38 @@ async def add_project(db: AsyncSession, resume_id: uuid.UUID, data: ProjectCreat
     await db.flush()
     await db.refresh(proj)
     return proj
+
+
+async def clear_experiences(db: AsyncSession, resume_id: uuid.UUID) -> None:
+    result = await db.execute(select(Experience).where(Experience.resume_id == resume_id))
+    for exp in result.scalars().all():
+        await db.delete(exp)
+    await db.flush()
+
+
+async def clear_educations(db: AsyncSession, resume_id: uuid.UUID) -> None:
+    result = await db.execute(select(Education).where(Education.resume_id == resume_id))
+    for edu in result.scalars().all():
+        await db.delete(edu)
+    await db.flush()
+
+
+async def clear_skills(db: AsyncSession, resume_id: uuid.UUID) -> None:
+    result = await db.execute(select(Skill).where(Skill.resume_id == resume_id))
+    for skill in result.scalars().all():
+        await db.delete(skill)
+    await db.flush()
+
+
+async def clear_certifications(db: AsyncSession, resume_id: uuid.UUID) -> None:
+    result = await db.execute(select(Certification).where(Certification.resume_id == resume_id))
+    for cert in result.scalars().all():
+        await db.delete(cert)
+    await db.flush()
+
+
+async def clear_projects(db: AsyncSession, resume_id: uuid.UUID) -> None:
+    result = await db.execute(select(Project).where(Project.resume_id == resume_id))
+    for proj in result.scalars().all():
+        await db.delete(proj)
+    await db.flush()

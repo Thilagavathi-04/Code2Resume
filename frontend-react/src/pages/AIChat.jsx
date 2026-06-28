@@ -3,6 +3,7 @@ import { chatStream } from '../api/github';
 import { generateResume } from '../api/resume';
 import v2 from '../api/v2';
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import {
@@ -246,25 +247,36 @@ export default function AIChat() {
     const isResumeRequest = /resume|cv|curriculum/i.test(currentInput);
 
     if (isResumeRequest) {
+      addMessage({
+        role: 'assistant',
+        content: '',
+        timestamp: new Date().toISOString(),
+        manufacturing: true,
+      });
       try {
         const response = await generateResume(currentInput);
         if (response.success) {
           const msgIndex = Date.now();
           const resumeData = response.resume_data || null;
           setResumeStates(prev => ({ ...prev, [msgIndex]: { saving: false, savedResumeId: null } }));
-          addMessage({
-            role: 'assistant',
+          updateLastAssistantMessage((prev) => ({
+            ...prev,
             content: `**${response.message}**\n\nYour resume has been generated. Use the buttons below to save, download, or preview it.`,
-            timestamp: new Date().toISOString(),
+            manufacturing: false,
             resumeData,
             resumeFilename: response.filename,
             resumeMsgIndex: msgIndex,
-          });
+          }));
         } else {
           throw new Error(response.detail || 'Failed to generate resume');
         }
       } catch (error) {
-        addMessage({ role: 'assistant', content: `Error: ${error.message}`, timestamp: new Date().toISOString(), isError: true });
+        updateLastAssistantMessage((prev) => ({
+          ...prev,
+          content: `Error: ${error.message}`,
+          isError: true,
+          manufacturing: false,
+        }));
       } finally {
         setLoading(false);
       }
@@ -349,6 +361,24 @@ export default function AIChat() {
     blockquote({ children, ...props }) {
       return <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 my-2" {...props}>{children}</blockquote>;
     },
+    table({ children, ...props }) {
+      return <div className="overflow-x-auto my-3"><table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg" {...props}>{children}</table></div>;
+    },
+    thead({ children, ...props }) {
+      return <thead className="bg-gray-50 dark:bg-gray-800" {...props}>{children}</thead>;
+    },
+    tbody({ children, ...props }) {
+      return <tbody className="divide-y divide-gray-100 dark:divide-gray-700 bg-white dark:bg-slate-900" {...props}>{children}</tbody>;
+    },
+    tr({ children, ...props }) {
+      return <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50" {...props}>{children}</tr>;
+    },
+    th({ children, ...props }) {
+      return <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider" {...props}>{children}</th>;
+    },
+    td({ children, ...props }) {
+      return <td className="px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap" {...props}>{children}</td>;
+    },
   };
 
   return (
@@ -432,7 +462,28 @@ export default function AIChat() {
                     ) : (
                       <div className="text-sm prose prose-sm max-w-none dark:prose-invert">
                         {msg.content ? (
-                          <ReactMarkdown components={MarkdownComponents}>{msg.content}</ReactMarkdown>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} components={MarkdownComponents}>{msg.content}</ReactMarkdown>
+                        ) : msg.manufacturing ? (
+                          <div className="flex flex-col items-center gap-3 py-4">
+                            <div className="relative w-16 h-16">
+                              <div className="absolute inset-0 border-4 border-gray-200 dark:border-gray-600 rounded-full" />
+                              <div className="absolute inset-0 border-4 border-transparent border-t-gray-900 dark:border-t-gray-100 rounded-full animate-spin" />
+                              <div className="absolute inset-2 border-4 border-transparent border-b-gray-500 dark:border-b-gray-400 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+                              <div className="absolute inset-0 flex items-center justify-center">
+                                <svg className="w-6 h-6 text-gray-700 dark:text-gray-300 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                  <path d="M9 12h6m-3-3v6m-7 4h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-center gap-1">
+                              <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Manufacturing your resume</p>
+                              <div className="flex gap-1">
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                              </div>
+                            </div>
+                          </div>
                         ) : msg.streaming ? (
                           <div className="flex items-center gap-2 text-gray-400 py-1">
                             <div className="flex gap-1">

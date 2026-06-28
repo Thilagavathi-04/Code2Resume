@@ -1,4 +1,5 @@
 import re
+import json
 from services.llm_service import get_llm
 from .rag_service import RAGService
 
@@ -79,39 +80,12 @@ class AgentService:
     def _smart_query(self, query: str, username: str):
         category = self._detect_project_filter(query)
 
-        if category:
-            results = self.rag.get_user_repos_by_category(username, category)
-            if results:
-                return results, f"Filtered by category: {category}"
+        repos = self.rag.get_user_repos(username)
+        if category and repos:
+            repos = [r for r in repos if category.lower() in (r.get("category", "") + " " + r.get("domain", "")).lower()]
 
-        results = self.rag.query(query, username=username, n_results=20)
-        docs = results.get('documents', [[]])[0]
-        metas = results.get('metadatas', [[]])[0]
-
-        repos = []
-        for doc, meta in zip(docs, metas):
-            if not isinstance(meta, dict):
-                continue
-            techs = []
-            for line in doc.split("\n"):
-                if line.startswith("Tech Stack:"):
-                    techs = [t.strip() for t in line.replace("Tech Stack:", "").strip().split(",") if t.strip()]
-            repos.append({
-                "name": meta.get("name", "unknown"),
-                "description": meta.get("description", ""),
-                "tech_stack": techs,
-                "category": meta.get("category", ""),
-                "difficulty": meta.get("difficulty", ""),
-                "final_score": meta.get("final_score", 0),
-                "architecture_type": meta.get("architecture_type", ""),
-                "is_ai_project": meta.get("is_ai_project", "False") == "True",
-                "ai_capabilities": json.loads(meta.get("ai_capabilities", "[]")),
-                "deployment_readiness": meta.get("deployment_readiness", "none"),
-                "has_testing": meta.get("has_testing", "False") == "True",
-                "readme": meta.get("readme", ""),
-            })
-
-        return repos, "Semantic search"
+        repos = sorted(repos, key=lambda r: r.get("final_score", 0) or r.get("resume_strength", 0) or 0, reverse=True)[:20]
+        return repos, f"Direct fetch ({len(repos)} repos)"
 
     def ask(self, query: str, username: str, model: str = None, user_profile: dict = None):
         model = model or settings.DEFAULT_MODEL
@@ -122,20 +96,12 @@ class AgentService:
             return result
 
         repos, source = self._smart_query(query, username)
-        context = self._build_project_summary(repos)
 
-        max_context_chars = 8000
-        if len(context) > max_context_chars:
-            context = context[:max_context_chars] + "\n... (truncated)"
-
-        profile = user_profile or {}
-        profile_info = ""
-        if profile.get("email"):
-            profile_info += f"Email: {profile['email']}\n"
-        if profile.get("github"):
-            profile_info += f"GitHub: {profile['github']}\n"
-        if profile.get("phone"):
-            profile_info += f"Phone: {profile['phone']}\n"
+        from services.context_compressor import ContextCompressor
+        from app.core.config import settings
+        compressor = ContextCompressor(max_tokens=settings.MAX_CONTEXT_TOKENS)
+        context = compressor.compress_repos(repos, profile=user_profile)
+        token_usage = compressor.get_token_usage(context)
 
         is_project_query = any(w in query.lower() for w in [
             "project", "repo", "repository", "github", "tech stack",
@@ -146,8 +112,7 @@ class AgentService:
         prompt = f"""You are a helpful AI assistant with knowledge about the user's GitHub projects.
 
 User: {username}
-{profile_info}
-Project Data ({source}, {len(repos)} projects):
+Project Data ({source}, {len(repos)} projects, {token_usage.get('tokens', 0)} tokens):
 {context}
 
 User Request: {query}
@@ -160,7 +125,7 @@ Instructions:
 - Format output clearly with Markdown.
 - Be specific, helpful, and accurate."""
 
-        print(f"Agent: {len(repos)} repos, source={source}, context={len(context)} chars")
+        print(f"Agent: {len(repos)} repos, source={source}, tokens={token_usage.get('tokens', 0)}")
         try:
             messages = [
                 {'role': 'system', 'content': 'You are a helpful AI coding assistant with access to the user\'s GitHub project data. Answer questions about their projects using the provided data. Also answer general programming questions.'},
@@ -177,20 +142,11 @@ Instructions:
             return
 
         repos, source = self._smart_query(query, username)
-        context = self._build_project_summary(repos)
 
-        max_context_chars = 8000
-        if len(context) > max_context_chars:
-            context = context[:max_context_chars] + "\n... (truncated)"
-
-        profile = user_profile or {}
-        profile_info = ""
-        if profile.get("email"):
-            profile_info += f"Email: {profile['email']}\n"
-        if profile.get("github"):
-            profile_info += f"GitHub: {profile['github']}\n"
-        if profile.get("phone"):
-            profile_info += f"Phone: {profile['phone']}\n"
+        from services.context_compressor import ContextCompressor
+        compressor = ContextCompressor(max_tokens=settings.MAX_CONTEXT_TOKENS)
+        context = compressor.compress_repos(repos, profile=user_profile)
+        token_usage = compressor.get_token_usage(context)
 
         is_project_query = any(w in query.lower() for w in [
             "project", "repo", "repository", "github", "tech stack",
@@ -201,8 +157,7 @@ Instructions:
         prompt = f"""You are a helpful AI assistant with knowledge about the user's GitHub projects.
 
 User: {username}
-{profile_info}
-Project Data ({source}, {len(repos)} projects):
+Project Data ({source}, {len(repos)} projects, {token_usage.get('tokens', 0)} tokens):
 {context}
 
 User Request: {query}

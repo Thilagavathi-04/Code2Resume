@@ -25,6 +25,11 @@ const v2 = {
     addSkill: (resumeId, data) => api.post(`/api/v2/resumes/${resumeId}/skills`, data),
     addCertification: (resumeId, data) => api.post(`/api/v2/resumes/${resumeId}/certifications`, data),
     addProject: (resumeId, data) => api.post(`/api/v2/resumes/${resumeId}/projects`, data),
+    clearExperiences: (resumeId) => api.delete(`/api/v2/resumes/${resumeId}/experiences`),
+    clearEducations: (resumeId) => api.delete(`/api/v2/resumes/${resumeId}/educations`),
+    clearSkills: (resumeId) => api.delete(`/api/v2/resumes/${resumeId}/skills`),
+    clearCertifications: (resumeId) => api.delete(`/api/v2/resumes/${resumeId}/certifications`),
+    clearProjects: (resumeId) => api.delete(`/api/v2/resumes/${resumeId}/projects`),
     aiEnhance: (data) => api.post('/api/v2/resumes/ai-enhance', data),
   },
 

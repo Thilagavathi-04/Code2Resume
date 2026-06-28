@@ -56,34 +56,38 @@ class ResumeEngine:
                 return domain, target_role
         return None, "Software Engineer"
 
-    def _fetch_context(self, username, target_domain):
+    def _fetch_context(self, username, target_domain, user_profile=None):
+        query = f"{target_domain} projects" if target_domain else "All projects"
+
+        print(f"\n[ResumeEngine] Fetching context for '{query}'")
+        repos = self.rag.get_user_repos(username)
+        print(f"[ResumeEngine] Found {len(repos)} repos for {username}")
+
+        if not repos:
+            print(f"[ResumeEngine] No repos found, returning empty context")
+            return "No project data found."
+
         if target_domain:
-            results = self.rag.query(f"{target_domain} projects", username=username, n_results=50)
-        else:
-            results = self.rag.query("List all projects and their details", username=username, n_results=50)
+            matching = [r for r in repos if target_domain.lower() in (r.get("category", "") + " " + r.get("domain", "")).lower()]
+            if matching:
+                repos = matching
+                print(f"[ResumeEngine] Filtered to {len(repos)} repos matching '{target_domain}'")
 
-        documents = results.get('documents', [[]])[0]
-        metadatas = results.get('metadatas', [[]])[0]
+        repos = sorted(repos, key=lambda r: r.get("final_score", 0) or r.get("resume_strength", 0) or 0, reverse=True)[:12]
 
-        if target_domain and metadatas:
-            filtered_docs = []
-            for doc, meta in zip(documents, metadatas):
-                if isinstance(meta, dict) and meta.get('type') == 'repo_summary':
-                    filtered_docs.append(doc)
-            documents = filtered_docs if filtered_docs else documents
+        from services.context_compressor import ContextCompressor
+        from app.core.config import settings
+        compressor = ContextCompressor(max_tokens=settings.MAX_CONTEXT_TOKENS)
+        context = compressor.compress_repos(repos, profile=user_profile)
 
-        filtered = []
-        for doc in documents:
-            if "Project:" in doc:
-                filtered.append(doc)
+        print(f"[ResumeEngine] Context built: {len(context)} chars, {len(repos)} repos")
+        for i, repo in enumerate(repos[:10]):
+            name = repo.get("name", "?")
+            cat = repo.get("category", "?")
+            techs = repo.get("tech_stack", [])
+            tech_str = ", ".join(techs[:5]) if isinstance(techs, list) else str(techs)[:50]
+            print(f"[ResumeEngine]   [{i+1}] {name} (cat={cat}, techs=[{tech_str}])")
 
-        if not filtered:
-            filtered = documents[:3]
-
-        context = "\n---\n".join(filtered) if filtered else "No project data found."
-        max_context_chars = 12000
-        if len(context) > max_context_chars:
-            context = context[:max_context_chars] + "\n... (truncated)"
         return context
 
     def _parse_json_response(self, content):
@@ -221,7 +225,7 @@ class ResumeEngine:
 
     def generate_structured_resume(self, query, username, model, user_profile=None, requested_projects=None):
         target_domain, target_role = self._detect_domain(query)
-        context = self._fetch_context(username, target_domain)
+        context = self._fetch_context(username, target_domain, user_profile=user_profile)
 
         if requested_projects:
             filtered = []
@@ -263,39 +267,54 @@ LinkedIn: {linkedin or 'not provided'}
 LeetCode: {leetcode or 'not provided'}
 {edu_section}
 
-Below is the raw project data extracted from the user's GitHub repositories:
+Below is the raw project data extracted from the user's ACTUAL GitHub repositories:
 
 {context}
 
-IMPORTANT RULES:
+CRITICAL RULES - VIOLATION WILL REJECT YOUR OUTPUT:
 
-1. SKILLS FORMAT - Categorize skills exactly like this:
+1. PROJECTS - You MUST ONLY use projects that appear in the context above. NEVER invent, create, rename, or fabricate any project. Every project name MUST match a "Project: <name>" line from the context exactly. If you include a project not in the context, the output is INVALID.
+
+2. SKILLS - Extract skills ONLY from the tech stacks and descriptions in the context above. Do not add skills that are not mentioned in the context.
+
+3. SKILLS FORMAT - Categorize skills exactly like this:
    - "Programming Languages": Python, SQL, JavaScript, TypeScript, etc.
    - "Core Areas": Machine Learning, NLP, Generative AI, RAG, LLM Applications, Computer Vision, etc.
    - "Libraries & Frameworks": LangChain, FAISS, TensorFlow, Scikit-learn, Flask, React, etc.
    - "Tools & Platforms": Git, GitHub, VS Code, Google Colab, Firebase, Docker, AWS, Ollama, etc.
    Each skill object must use these EXACT category names.
 
-2. PROJECTS FORMAT - For each project:
-   - "name": "PROJECT_NAME – Short one-line description" (e.g. "ZORO – AI Driven Task Automation")
+4. PROJECTS FORMAT - For each project:
+   - "name": "PROJECT_NAME – Short one-line description" (use the exact PROJECT_NAME from the context)
    - "description": "1-2 sentences: what was built and the technical approach"
    - "technologies": ["Tech1", "Tech2", "Tech3"] (the main technologies used)
    - "highlights": ["Built X using Y achieving Z", "Implemented A with B reducing C by D%"] (2-3 bullet points with strong action verbs)
    - "github_url": the repo URL if available
 
-3. If Resume Description or Bullet Points are provided for a project, use them as the primary source.
+5. If Resume Description or Bullet Points are provided for a project, use them as the primary source.
 
-4. Include ALL projects from the context (or up to 6 best ones if there are many).
+6. Include ONLY real projects from the context (or up to 6 best ones if there are many). Do NOT add any project not listed above.
 
-5. ALWAYS include email, phone, GitHub in personal section.
+7. ALWAYS include email, phone, GitHub in personal section.
 
-6. Write a detailed 3-4 sentence professional summary.
+8. Write a detailed 3-4 sentence professional summary.
 
 Return this JSON structure exactly:
 {{"personal":{{"name":"{username}","email":"{email}","phone":"{phone}","location":"","linkedin":"{linkedin}","github":"{github}","website":"{leetcode}"}},"summary":"3-4 sentence summary for {target_role}","skills":[{{"name":"Python","category":"Programming Languages"}},{{"name":"Machine Learning","category":"Core Areas"}},{{"name":"LangChain","category":"Libraries & Frameworks"}},{{"name":"Git","category":"Tools & Platforms"}}],"experience":[{{"company":"Co","position":"Title","startDate":"2024-01","endDate":"2024-06","highlights":["Built X using Y reducing Z by N%"]}}],"education":[{{"institution":"{edu_institution or 'Uni'}","degree":"{edu_degree or 'BS'}","field":"{edu_field or 'CS'}","startDate":"{edu_start or '2022'}","endDate":"{edu_end or '2026'}","gpa":"{edu_gpa or ''}"}}],"projects":[{{"name":"PROJECT_NAME – Short Description","description":"1-2 sentences about what was built and how","technologies":["Tech1","Tech2"],"highlights":["Built X using Y achieving Z","Implemented A with B"],"github_url":""}}],"certifications":[{{"name":"Cert","issuer":"Org"}}],"section_order":["summary","skills","projects","education","certifications"]}}
 
 Return ONLY the JSON."""
 
+        print(f"\n[ResumeEngine] === DATA PASSED TO LLM ===")
+        print(f"[ResumeEngine] Target role: {target_role}")
+        print(f"[ResumeEngine] User: {username}")
+        print(f"[ResumeEngine] Email: {email or 'not provided'}")
+        print(f"[ResumeEngine] Phone: {phone or 'not provided'}")
+        print(f"[ResumeEngine] GitHub: {github or 'not provided'}")
+        print(f"[ResumeEngine] LinkedIn: {linkedin or 'not provided'}")
+        print(f"[ResumeEngine] Education: {edu_institution or 'none'}")
+        print(f"[ResumeEngine] Context length: {len(context)} chars")
+        print(f"[ResumeEngine] Context preview:\n{context[:1500]}")
+        print(f"[ResumeEngine] === END DATA ===\n")
         print(f"[ResumeEngine] Generating structured resume for {target_role} with {model}...")
 
         for attempt in range(2):
@@ -307,6 +326,9 @@ Return ONLY the JSON."""
                     for key in required_keys:
                         if key not in resume_data:
                             resume_data[key] = [] if key not in ("personal", "summary", "section_order") else {} if key == "personal" else ""
+                    self._ensure_skills(resume_data, context)
+                    self._ensure_projects(resume_data, username, context)
+                    self._validate_projects(resume_data, context)
                     self._ensure_project_descriptions(resume_data, username)
                     self._ensure_education(resume_data, user_profile)
                     return resume_data
@@ -316,6 +338,87 @@ Return ONLY the JSON."""
 
         print("[ResumeEngine] All LLM attempts failed, using fallback parser")
         return self._build_fallback_resume(username, target_role, context, user_profile=user_profile)
+
+    def _validate_projects(self, resume_data, context):
+        real_names = set()
+        for match in re.finditer(r'Project:\s*(.+)', context):
+            real_names.add(match.group(1).strip().lower())
+
+        projects = resume_data.get("projects", [])
+        valid = []
+        for proj in projects:
+            proj_name = proj.get("name", "")
+            proj_name_lower = proj_name.split("–")[0].strip().lower() if "–" in proj_name else proj_name.lower()
+            if proj_name_lower in real_names:
+                valid.append(proj)
+            else:
+                print(f"[ResumeEngine] FILTERED OUT fake project: '{proj_name}' (not in context)")
+        if len(valid) < len(projects):
+            print(f"[ResumeEngine] Projects: {len(projects)} -> {len(valid)} after validation")
+        resume_data["projects"] = valid
+
+    def _ensure_skills(self, resume_data, context):
+        skills = resume_data.get("skills", [])
+        if skills:
+            return
+        skill_pattern = re.findall(
+            r'(?:Python|JavaScript|TypeScript|React|Node\.?js|Flask|Django|FastAPI|PostgreSQL|MongoDB|MySQL|Docker|Kubernetes|AWS|Git|GitHub|TensorFlow|PyTorch|Scikit-learn|OpenCV|Pandas|NumPy|HTML|CSS|Java|C\+\+|Go|Rust|Ruby|PHP|Swift|Kotlin|Flutter|Redis|GraphQL|REST|API|LLM|NLP|Machine Learning|Deep Learning|AI|Data Science|Spark|Hadoop|Airflow|Linux|Bash|Shell|CI/CD|Terraform|Ansible|LangChain|FAISS|Ollama)',
+            context, re.I,
+        )
+        seen = set()
+        for s in skill_pattern:
+            if s.lower() not in seen:
+                seen.add(s.lower())
+                cat = (
+                    "Programming Languages" if s.lower() in ("python", "javascript", "typescript", "java", "c++", "go", "rust", "ruby", "php", "swift", "kotlin", "html", "css", "bash", "shell", "sql") else
+                    "Core Areas" if s.lower() in ("machine learning", "deep learning", "ai", "data science", "nlp", "llm", "computer vision", "rag") else
+                    "Libraries & Frameworks" if s.lower() in ("react", "node.js", "nodejs", "flask", "django", "fastapi", "flutter", "graphql", "tensorflow", "pytorch", "scikit-learn", "opencv", "pandas", "numpy", "langchain", "faiss") else
+                    "Tools & Platforms"
+                )
+                skills.append({"name": s, "category": cat})
+        resume_data["skills"] = skills
+
+    def _ensure_projects(self, resume_data, username, context):
+        projects = resume_data.get("projects", [])
+        if projects:
+            return
+        repo_blocks = re.split(r'\n---\n', context)
+        for block in repo_blocks[:6]:
+            name_match = re.search(r'Project:\s*(.+)', block)
+            if not name_match:
+                continue
+            name = name_match.group(1).strip()
+            tech_match = re.search(r'Tech Stack:\s*(.+?)(?:\n|$)', block)
+            techs = [t.strip() for t in tech_match.group(1).split(",")] if tech_match and tech_match.group(1).strip() else []
+            lines = block.strip().split("\n")
+            desc_lines = []
+            for line in lines[2:]:
+                line = line.strip()
+                if not line or line.startswith("Tech Stack:") or line.startswith("Project:") or line.startswith("Readme:"):
+                    break
+                desc_lines.append(line)
+            desc = " ".join(desc_lines)[:200] if desc_lines else ""
+            readme_match = re.search(r'Readme:\s*([\s\S]+?)(?:\nProject:|\n---|$)', block, re.IGNORECASE)
+            highlights = []
+            if readme_match:
+                sentences = re.split(r'[.!?\n]+', readme_match.group(1).strip()[:500])
+                for s in sentences[:3]:
+                    s = s.strip()
+                    if len(s) > 20 and not s.startswith('#'):
+                        highlights.append(s)
+            if not highlights:
+                highlights = [
+                    f"Architected and developed {name} using {', '.join(techs[:3]) if techs else 'modern technologies'}",
+                    "Implemented core features with focus on performance and code quality",
+                ]
+            projects.append({
+                "name": f"{name} – {desc[:60] if desc else 'Software Project'}",
+                "description": desc or f"A software project built with {', '.join(techs[:3]) if techs else 'modern technologies'}.",
+                "technologies": techs[:6],
+                "highlights": highlights,
+                "github_url": "",
+            })
+        resume_data["projects"] = projects
 
     def _ensure_project_descriptions(self, resume_data, username):
         projects = resume_data.get("projects", [])

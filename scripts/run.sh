@@ -100,7 +100,7 @@ else
     echo "   Status: Not running (start Ollama first: ollama serve)"
 fi
 echo ""
-uv run uvicorn backend.app.main:app --reload --host 0.0.0.0 --port 8001 > backend.log 2>&1 &
+uv run uvicorn backend.app.main:app --host 0.0.0.0 --port 8001 > backend.log 2>&1 &
 BACKEND_PID=$!
 
 # Wait for backend to start

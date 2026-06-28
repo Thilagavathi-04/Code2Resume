@@ -22,10 +22,12 @@ import {
   Link,
   Unlink,
   RefreshCw,
+  Network,
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useThemeStore } from '../store/themeStore';
 import { getCurrentUser, updateUser } from '../api/auth';
+import { rebuildKnowledgeGraph } from '../api/github';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import { useToastStore } from '../components/ui/Toast';
@@ -155,6 +157,7 @@ export default function Settings() {
 
   const [accentColor, setAccentColor] = useState('#111827');
   const [compactMode, setCompactMode] = useState(false);
+  const [rebuildingKG, setRebuildingKG] = useState(false);
 
   const fetchUserData = useCallback(async () => {
     try {
@@ -222,6 +225,19 @@ export default function Settings() {
       setMessage({ type: 'error', text: errMsg });
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleRebuildKG = async () => {
+    setRebuildingKG(true);
+    try {
+      const result = await rebuildKnowledgeGraph();
+      addToast({ type: 'success', message: result.message || 'Knowledge graph rebuilt!' });
+    } catch (error) {
+      const errMsg = error.response?.data?.detail || 'Failed to rebuild knowledge graph';
+      addToast({ type: 'error', message: errMsg });
+    } finally {
+      setRebuildingKG(false);
     }
   };
 
@@ -439,6 +455,17 @@ export default function Settings() {
                 enabled={github.autoSync}
                 onChange={(v) => setGithub({ ...github, autoSync: v })}
               />
+            </div>
+
+            <div className="pt-2 border-t border-gray-100 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-900 dark:text-white mb-2">Knowledge Graph</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                Rebuild the knowledge graph from your existing analyzed repos. This helps improve resume generation.
+              </p>
+              <Button variant="secondary" onClick={handleRebuildKG} loading={rebuildingKG}>
+                <Network className="w-4 h-4" />
+                Rebuild Knowledge Graph
+              </Button>
             </div>
 
             <div className="flex justify-end gap-3">

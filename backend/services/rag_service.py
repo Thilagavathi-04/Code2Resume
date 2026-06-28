@@ -60,6 +60,9 @@ class RAGService:
             cat = classification.get("primary", classification.get("category", "Software"))
             description = f"{cat} project built with {top_techs}"
 
+        readme = repo_data.get("readme_content", "")
+        semantic = repo_data.get("semantic_analysis", {})
+
         resume_desc = semantic.get("resume_description", "")
         if not resume_desc:
             top_techs = ", ".join(tech_stack_flat[:4]) if tech_stack_flat else "modern technologies"
@@ -70,8 +73,6 @@ class RAGService:
                 resume_desc = f"{description}. Built with {top_techs} to deliver a robust solution."
             else:
                 resume_desc = f"A software project built with {top_techs}."
-
-        readme = repo_data.get("readme_content", "")
 
         classification = repo_data.get("classification", {})
         if not classification or "category" not in classification:
@@ -92,7 +93,6 @@ class RAGService:
 
         architecture = repo_data.get("architecture", {})
         quality_metrics = repo_data.get("quality_metrics", {})
-        semantic = repo_data.get("semantic_analysis", {})
         aiml = repo_data.get("ai_ml", {})
         deployment = repo_data.get("deployment", {})
         databases = repo_data.get("databases", {})
@@ -154,17 +154,63 @@ class RAGService:
         )
         print(f"[RAG] Indexed {repo_name} for user {username}: category={category}, difficulty={difficulty}, score={scores['final_score']}, arch={architecture.get('type', '?')}, doc_len={len(text_content)}")
 
-    def query(self, query_text: str, username: str, n_results: int = 3):
+    def query(self, query_text: str, username: str, n_results: int = 3,
+              filters: dict = None, use_reranker: bool = True):
+        import time
+        from app.core.config import settings
+
+        timings = {}
+        t0 = time.time()
+
         self._ensure_init()
         if self.collection.count() == 0:
-            return {"documents": [[]], "metadatas": [[]]}
+            return {"repos": [], "context": "No project data found.", "token_usage": {}, "count": 0}
 
-        results = self.collection.query(
-            query_texts=[query_text],
-            n_results=n_results,
-            where={"username": username}
-        )
-        return results
+        from services.hybrid_retriever import HybridRetriever
+        retriever = HybridRetriever(self, settings)
+        timings["bm25_index"] = time.time() - t0
+
+        t1 = time.time()
+        top_n = settings.RETRIEVAL_TOP_N
+        candidates = retriever.hybrid_search(username, query_text, top_n=top_n, filters=filters)
+        timings["hybrid_search"] = time.time() - t1
+
+        t2 = time.time()
+        threshold = settings.RETRIEVAL_SIMILARITY_THRESHOLD
+        candidates = [r for r in candidates if r.get("composite_score", 0) >= threshold]
+        timings["threshold_filter"] = time.time() - t2
+
+        t3 = time.time()
+        if use_reranker and len(candidates) > settings.RETRIEVAL_TOP_K:
+            from services.reranker import Reranker
+            reranker = Reranker(settings.RERANKER_MODEL)
+            candidates = reranker.rerank(query_text, candidates, top_k=settings.RETRIEVAL_TOP_K)
+        timings["reranking"] = time.time() - t3
+
+        t4 = time.time()
+        from services.context_compressor import ContextCompressor
+        compressor = ContextCompressor(max_tokens=settings.MAX_CONTEXT_TOKENS)
+        context = compressor.compress_repos(candidates)
+        token_usage = compressor.get_token_usage(context)
+        timings["compression"] = time.time() - t4
+
+        timings["total"] = time.time() - t0
+
+        try:
+            from services.retrieval_metrics import RetrievalLogger
+            logger = RetrievalLogger()
+            logger.log_retrieval(username, query_text, candidates, timings)
+        except Exception:
+            pass
+
+        print(f"[RAG] Hybrid retrieval for '{query_text}': {len(candidates)} repos, {token_usage.get('tokens', 0)} tokens, {timings['total']:.3f}s")
+
+        return {
+            "repos": candidates,
+            "context": context,
+            "token_usage": token_usage,
+            "count": len(candidates),
+        }
 
     def get_user_repos(self, username: str):
         self._ensure_init()

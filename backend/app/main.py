@@ -54,8 +54,12 @@ async def on_startup():
         rag = RAGService()
         rag._ensure_init()
         print("[startup] RAG service initialized")
+
+        from services.hybrid_retriever import HybridRetriever
+        retriever = HybridRetriever(rag, settings)
+        print("[startup] Hybrid retriever ready")
     except Exception as e:
-        print(f"[startup] WARNING: RAG init failed: {e}")
+        print(f"[startup] WARNING: RAG/retriever init failed: {e}")
 
 
 @app.get("/health")
